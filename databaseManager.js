@@ -54,8 +54,8 @@ module.exports.createCarBid = function(userId,
 };
 module.exports.findBids = function(bidRef) {
 	const params = {
-	    TableName: 'BidDetails',
-	    KeyConditionExpression: "bid_reference_number = :a",
+	    TableName: 'car-bid-details',
+	    KeyConditionExpression: "bid_reference = :a",
 	    ExpressionAttributeValues : {
 	      ":a":bidRef
 	    }
