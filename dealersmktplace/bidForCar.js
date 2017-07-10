@@ -10,7 +10,7 @@ module.exports = function (event) {
 } 
 function acceptBid(request) {
   try{
-      var verificationToken = 'zTO6zDh4VVUj53I7M5Nsf4QB';
+      var verificationToken = 'xxxxxxxxxxxxxxxxxxxxxxxxx';
       var incomingVerificationToken = request.token;
       //both verificationToken and incomingVerificationToken must be same.
 
