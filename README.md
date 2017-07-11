@@ -11,7 +11,7 @@
 ```bash
 # Install node modules
 # Change into the newly created directory
-$ cd <=projectdir
+$ cd projectdir
 $ npm install
 $ sls deploy
 ```
