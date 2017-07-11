@@ -41,4 +41,11 @@ module.exports.bidForCar = (event, context, callback) => {
 	} catch(err) {
 		callback(err);
 	}
-};  
+}; 
+module.exports.markBidInvalid = (event, context, callback) => {
+	try {
+		console.log("Called every 10 minutes");
+	} catch(err) {
+		callback(err);
+	}
+}; 
