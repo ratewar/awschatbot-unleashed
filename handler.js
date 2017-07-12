@@ -3,6 +3,7 @@
 const dispatch = require('./carmktplacebot/dispatch');
 const authorizer = require('./dealersmktplace/authorization');
 const submitBid = require('./dealersmktplace/bidForCar');
+const bidInactive = require('./markbidinactive/markInactive');
 
 module.exports.intents = (event, context, callback) => {
 	try {
@@ -44,7 +45,9 @@ module.exports.bidForCar = (event, context, callback) => {
 }; 
 module.exports.markBidInvalid = (event, context, callback) => {
 	try {
-		console.log("Called every 10 minutes");
+		console.log("Called as part of Cron Job That runs Everyday at 10 am");
+		var response = bidInactive(event);
+		callback(null, response);	
 	} catch(err) {
 		callback(err);
 	}
