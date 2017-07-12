@@ -11,7 +11,7 @@ module.exports = function(intentRequest) {
       	console.log(intentName + ' was called');
       	return sellCarNow(intentRequest);
     }
-    else if (intentName === 'ShowMyBids') {
+    else if (intentName === 'ShowBids') {
       	console.log(intentName + ' was called');
       	return showMyBids(intentRequest);
     }
