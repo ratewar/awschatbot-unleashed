@@ -23,11 +23,11 @@ module.exports = function(intentRequest) {
   console.log(`NumberOfOwners is ${numberOfOwners}`);
   console.log(`CarCity is ${carCity}`);
   console.log(`ShortDescription is ${shortDescription}`);
-    
+
 	var userId = intentRequest.userId;
 	const slots = intentRequest.currentIntent.slots;
-	
-	const validationResult = validateCarDetails(carBrandName, 
+
+	const validationResult = validateCarDetails(carBrandName,
                         												carModel,
                         												carYearOfMake,
                         												carVariant,
@@ -40,16 +40,59 @@ module.exports = function(intentRequest) {
         console.log(`Violated Slot is ${validationResult.violatedSlot}`);
         console.log(`Violated message is ${validationResult.message}`);
       	slots[`${validationResult.violatedSlot}`] = null;
-      	return Promise.resolve(lexResponses.elicitSlot(intentRequest.sessionAttributes, 
-      													                       intentRequest.currentIntent.name, 
-      													                       slots, 
-      													                       validationResult.violatedSlot, 
+      	return Promise.resolve(lexResponses.elicitSlot(intentRequest.sessionAttributes,
+      													                       intentRequest.currentIntent.name,
+      													                       slots,
+      													                       validationResult.violatedSlot,
       													                       validationResult.message));
     }
-    return Promise.resolve(lexResponses.delegate(intentRequest.sessionAttributes, 
-    												                      intentRequest.currentIntent.slots));
+    console.log('before checking car Kilometre driven 987987979797');
+    if(carBrandName != null && carModel != null && carYearOfMake != null && carVariant != null && carKmDriven === null)
+    {
+        console.log('Creating elicitSlot with Response Card');
+        var responseCard =   {
+                           "genericAttachments": [
+                               {
+                                   "buttons": [
+                                       {
+                                           "text": "23",
+                                           "value": "23"
+                                       },
+                                       {
+                                           "text": "5001",
+                                           "value": "5001"
+                                       },
+                                       {
+                                           "text": "12001",
+                                           "value": "12001"
+                                       },
+                                       {
+                                           "text": "18001",
+                                           "value": "18001"
+                                       },
+                                       {
+                                           "text": "25001",
+                                           "value": "25001"
+                                       }
+                                   ],
+                                   "subTitle": "Specify Km using range buttons below or Specify Kms value explicitly",
+                                   "title": "How many Kms Car has driven?"
+                               }
+                           ],
+                           "version": 1,
+                           "contentType": "application/vnd.amazonaws.card.generic"
+                            };
+            return Promise.resolve(lexResponses.elicitSlotwithResponseCard(intentRequest.sessionAttributes,
+                                                                           intentRequest.currentIntent.name,
+                                                                           responseCard,
+                                                                           slots,
+                                                                           'CarKmDriven',
+                                                                           validationResult.message));
+      }
+      return Promise.resolve(lexResponses.delegate(intentRequest.sessionAttributes,
+											                             intentRequest.currentIntent.slots));
 };
-function validateCarDetails(carBrandName, 
+function validateCarDetails(carBrandName,
               							carModel,
               							carYearOfMake,
               							carVariant,

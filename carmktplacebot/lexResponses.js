@@ -9,7 +9,24 @@ module.exports.delegate = function(sessionAttributes,slots) {
     },
   };
 };
-
+module.exports.elicitSlotwithResponseCard = function(sessionAttributes,
+                                                      intentName, 
+                                                      responseCard, 
+                                                      slots, 
+                                                      elicitSlot,
+                                                      message) {
+  return {
+    sessionAttributes,
+    dialogAction : {
+      type : 'ElicitSlot',
+      intentName,
+      responseCard,
+      slots,
+      slotToElicit : elicitSlot,
+      message,
+    }
+  };
+};
 module.exports.elicitSlot = function(sessionAttributes,intentName, slots, slotToElicit,message) {
   return {
     sessionAttributes,

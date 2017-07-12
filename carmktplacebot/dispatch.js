@@ -1,6 +1,6 @@
 'use strict';
 
-const sellCarNow = require('./sellCar');
+const sellCar = require('./sellCar');
 const showMyBids = require('./showMyBids');
 
 module.exports = function(intentRequest) {
@@ -9,7 +9,7 @@ module.exports = function(intentRequest) {
   
   	if (intentName === 'SellCar') {
       	console.log(intentName + ' was called');
-      	return sellCarNow(intentRequest);
+      	return sellCar(intentRequest);
     }
     else if (intentName === 'ShowBids') {
       	console.log(intentName + ' was called');
