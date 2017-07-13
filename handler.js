@@ -8,6 +8,7 @@ module.exports.intents = (event, context, callback) => {
 	try {
 	    console.log(`event.bot.name=${event.bot.name}`);
 	    dispatch(event).then(response => {
+	    	console.log(`Main Response going back is ${JSON.stringify(response)}`);
 	    	callback(null, response);
 	    });
 	} catch (err) {

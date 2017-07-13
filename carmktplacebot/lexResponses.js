@@ -9,25 +9,7 @@ module.exports.delegate = function(sessionAttributes,slots) {
     },
   };
 };
-module.exports.elicitSlotwithResponseCard = function(sessionAttributes,
-                                                      intentName, 
-                                                      responseCard, 
-                                                      slots, 
-                                                      elicitSlot,
-                                                      message) {
-  return {
-    sessionAttributes,
-    dialogAction : {
-      type : 'ElicitSlot',
-      intentName,
-      responseCard,
-      slots,
-      slotToElicit : elicitSlot,
-      message,
-    }
-  };
-};
-module.exports.elicitSlot = function(sessionAttributes,intentName, slots, slotToElicit,message) {
+module.exports.elicitSlot = function(sessionAttributes,intentName, slots, slotToElicit,message,title,buttons) {
   return {
     sessionAttributes,
     dialogAction : {
@@ -36,6 +18,7 @@ module.exports.elicitSlot = function(sessionAttributes,intentName, slots, slotTo
       slots,
       slotToElicit,
       message,
+      responseCard: getResponseCard(title,buttons)
     }
   };
 };
@@ -48,4 +31,16 @@ module.exports.close = function (sessionAttributes, fulfillmentState, message) {
             message,
         },
     };
+}
+function getResponseCard(title,buttons) {
+  console.log(`In the getResponseCar ${buttons}`);
+  return {
+      contentType: 'application/vnd.amazonaws.card.generic',
+      genericAttachments: [
+          {
+            title,
+            buttons
+          }
+      ]
+  };
 }
