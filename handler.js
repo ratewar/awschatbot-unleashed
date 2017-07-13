@@ -13,7 +13,7 @@ module.exports.intents = (event, context, callback) => {
 	    });
 	} catch (err) {
 	    callback(err);
-	} 
+	}
 };
 module.exports.authorization = (event, context, callback) => {
 	try{
@@ -33,22 +33,22 @@ module.exports.authorization = (event, context, callback) => {
 	} catch(err) {
 		callback(err);
 	}
-};  
+};
 module.exports.bidForCar = (event, context, callback) => {
 	try {
 		submitBid(event).then((response) => {
-			callback(null, response);	
+			callback(null, response);
 		});
 	} catch(err) {
 		callback(err);
 	}
-}; 
+};
 module.exports.markBidInvalid = (event, context, callback) => {
 	try {
 		console.log("Called as part of Cron Job That runs Everyday at 10 am");
 		var response = bidInactive(event);
-		callback(null, response);	
+		callback(null, response);
 	} catch(err) {
 		callback(err);
 	}
-}; 
+};
