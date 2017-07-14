@@ -14,6 +14,17 @@ module.exports = function(intentRequest) {
   	const numberOfOwners = intentRequest.currentIntent.slots.NumberOfOwners;
   	const carCity = intentRequest.currentIntent.slots.CarCity;
   	const shortDescription = intentRequest.currentIntent.slots.ShortDescription;
+    console.log(` carBrandName ${carBrandName}`);
+    console.log(` carModel ${carModel}`);
+    console.log(` carYearOfMake ${carYearOfMake}`);
+    console.log(` carVariant ${carVariant}`);
+    console.log(` carKmDriven ${carKmDriven}`);
+    console.log(` carColor ${carColor}`);
+    console.log(` numberOfOwners ${numberOfOwners}`);
+    console.log(` carCity ${carCity}`);
+    console.log(` shortDescription ${shortDescription}`);
+    
+
   	const source = intentRequest.invocationSource;
   	var userId = intentRequest.userId;
   	const slots = intentRequest.currentIntent.slots;
@@ -29,21 +40,19 @@ module.exports = function(intentRequest) {
                                                             numberOfOwners,
                                                             carCity,
                                                             shortDescription);
+    console.log(`validationResult.isValid value is ${validationResult.isValid} and violatedSlot is ${validationResult.violatedSlot}`);
     if (!validationResult.isValid)
     {
-        slots[`${validationResult.violatedSlot}`] = null;
-        var options = buildOptions(validationResult.violatedSlot,
-                                    carBrandName,carModel,carYearOfMake,carVariant,
-                                    carKmDriven,carColor,numberOfOwners,carCity,shortDescription);
-        var responseCard = buildResponseCard(`Specify ${validationResult.violatedSlot}`,
-                                                  validationResult.message.content,
-                                                  options);
-        var outputSessionAttributes = createSessionAtributes(validationResult.violatedSlot,
-                                                      carBrandName,carModel,carYearOfMake,carVariant,
-                                                      carKmDriven,carColor,numberOfOwners,carCity,shortDescription);
+        
+        var options = buildOptions(validationResult.violatedSlot,intentRequest.currentIntent.slots);
+        var responseCard = buildResponseCard(validationResult.responseCardTitle,
+                                             validationResult.responseCarSubtitle,
+                                              options);
+        var outputSessionAttributes = 
+               createSessionAtributes(validationResult.violatedSlot,validationResult.violatedSlotOriginalValue);
       
         //console.log(`I have Output Session Attributes ${JSON.stringify(outputSessionAttributes)}`);
-        console.log('checking for violatedSlot');
+        slots[`${validationResult.violatedSlot}`] = null;
         var response = lexResponses.elicitSlot(outputSessionAttributes,
                                                 intentRequest.currentIntent.name,
                                                 slots,
@@ -54,10 +63,19 @@ module.exports = function(intentRequest) {
         console.log(strResponse);
         return Promise.resolve(response); 
     }
-
-    console.log('before checking car Kilometre driven 987987979797');
-    return Promise.resolve(lexResponses.delegate(intentRequest.sessionAttributes,
+    else
+    { 
+      var isSessionAttributesEmpty = _.isEmpty(sessionAttributes);
+      console.log(`Session Attributes is empty check ${isSessionAttributesEmpty}`);
+      if(!isSessionAttributesEmpty)
+      {
+        intentRequest.currentIntent.slots[`${sessionAttributes.vliolatedSlot}`] =  `${sessionAttributes.violatedSlotOriginalValue}`;
+        intentRequest.sessionAttributes = {};
+      }
+      console.log('before checking car Kilometre driven 987987979797');
+      return Promise.resolve(lexResponses.delegate(intentRequest.sessionAttributes,
 											                             intentRequest.currentIntent.slots));
+    } 
 };
 // Build a responseCard with a title, subtitle, and an optional set of options which should be displayed as buttons.
 function buildResponseCard (title, subTitle, options)
@@ -81,24 +99,24 @@ function buildResponseCard (title, subTitle, options)
      };
  }
 // Build a list of potential options for a given slot, to be used in responseCard generation.
-function buildOptions(slot, appointmentType, date, bookingMap) {
-      if (slot === 'CarBrandName') {
+function buildOptions(violatedSlot, allSlots) {
+      if (violatedSlot === 'CarBrandName') {
           return [
-              { text: 'Yes, Continue', value: 'Y' },
+              { text: `Yes, Continue with the ${allSlots.CarBrandName}`, value: 'Y' },
           ];
-      } else if (slot === 'CarModel') {
+      } else if (violatedSlot === 'CarModel') {
           // Return the next five weekdays.
           const options = [];
           return options;
-      } else if (slot === 'CarYearOfMake') {
+      } else if (violatedSlot === 'CarYearOfMake') {
         const options = [];
         return options;
       }
-      else if (slot === 'CarVariant') {
+      else if (violatedSlot === 'CarVariant') {
         const options = [];
         return options;
       }
-      else if (slot === 'CarKmDriven') {
+      else if (violatedSlot === 'CarKmDriven') {
         return [
             { text: '5000 - 12000', value: '5000 - 12000'},
             { text: '12001 - 18000', value: '12001 - 18000'},
@@ -107,34 +125,30 @@ function buildOptions(slot, appointmentType, date, bookingMap) {
             { text: '32001 - 40000', value: '32001 - 40000'},
         ];
       }
-      else if (slot === 'CarColor') {
+      else if (violatedSlot === 'CarColor') {
         const options = [];
         const potentialDate = new Date();
         return options;
       }
-      else if (slot === 'NumberOfOwners') {
+      else if (violatedSlot === 'NumberOfOwners') {
         const options = [];
         const potentialDate = new Date();
         return options;
       }
-      else if (slot === 'CarCity') {
+      else if (violatedSlot === 'CarCity') {
         const options = [];
         const potentialDate = new Date();
         return options;
       }
-      else if (slot === 'ShortDescription') {
+      else if (violatedSlot === 'ShortDescription') {
         const options = [];
         const potentialDate = new Date();
         return options;
       }
  }
-function createSessionAtributes(violatedSlot,carBrandName,carModel,carYearOfMake,carVariant,
-                                carKmDriven,carColor,numberOfOwners,carCity,shortDescription) {
+function createSessionAtributes(violatedSlot,violatedSlotOriginalValue) {
   const outputSessionAttributes = {};
   outputSessionAttributes.vliolatedSlot = violatedSlot;
-  if(violatedSlot === 'CarBrandName')
-  {
-    outputSessionAttributes.CarBrandName = carBrandName;
-  }
+  outputSessionAttributes.violatedSlotOriginalValue = violatedSlotOriginalValue;
   return outputSessionAttributes;
 }
