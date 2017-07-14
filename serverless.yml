@@ -71,6 +71,19 @@ provider:
 functions:
   intents:
     handler: handler.intents
+  greetUser:
+    handler: handler.greetUser
+  createBidSlackChannel:
+    handler: hander.createBidSlackChannel
+    events:
+      - stream:
+          type: dynamodb
+          arn: 
+              Fn::GetAtt:
+                - CarBidMasterTable
+                - StreamArn
+          batchSize: 1
+          startingPosition: LATEST      
   authorization:
     handler: handler.authorization
     events:
@@ -144,7 +157,9 @@ resources:
        ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-       TableName: "car-bid-master"  
+       TableName: "car-bid-master"
+       StreamSpecification:
+          StreamViewType: NEW_IMAGE   
   CarBidDetailsTable:
      Type: AWS::DynamoDB::Table
      Properties:

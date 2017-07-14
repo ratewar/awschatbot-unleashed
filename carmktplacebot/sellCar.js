@@ -4,8 +4,7 @@
  const handleFulfillmentCodeHook = require('./manageFullfilment');
 
 module.exports = function (intentRequest) {
-	console.log('Hello World');
-  	const source = intentRequest.invocationSource;    
+	const source = intentRequest.invocationSource;    
   	if (source === 'DialogCodeHook') {
         return handleDialogCodeHook(intentRequest);
     }
