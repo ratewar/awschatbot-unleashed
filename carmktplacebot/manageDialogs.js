@@ -29,53 +29,83 @@ module.exports = function(intentRequest) {
   	var userId = intentRequest.userId;
   	const slots = intentRequest.currentIntent.slots;
     var sessionAttributes = intentRequest.sessionAttributes;
-    console.log(`Hello Brother here is sessionAttributes ${sessionAttributes}`);
-	  const validationResult = validator.validateCarDetails(sessionAttributes,
-                                                            carBrandName,
-                                                            carModel,
-                                                            carYearOfMake,
-                                                            carVariant,
-                                                            carKmDriven,
-                                                            carColor,
-                                                            numberOfOwners,
-                                                            carCity,
-                                                            shortDescription);
+    
+	  const validationResult = validator.validateCarDetails(carBrandName,
+                                                          carModel,
+                                                          carYearOfMake,
+                                                          carVariant,
+                                                          carKmDriven,
+                                                          carColor,
+                                                          numberOfOwners,
+                                                          carCity,
+                                                          shortDescription);
     console.log(`validationResult.isValid value is ${validationResult.isValid} and violatedSlot is ${validationResult.violatedSlot}`);
     if (!validationResult.isValid)
     {
-        
-        var options = buildOptions(validationResult.violatedSlot,intentRequest.currentIntent.slots);
-        var responseCard = buildResponseCard(validationResult.responseCardTitle,
+      /*
+      * this block below is checking if session attribute is non empty and contains violated slot which is 
+      * same as the slot which has again violated in validation then close the conversation as user
+      * does not have a valid input for the slot.
+      */
+      console.log(`Session Attributes is : ${sessionAttributes}`);  
+      var isSessionAttributeEmpty = _.isEmpty(sessionAttributes);
+      console.log(`Session Attribute Empty check is ${isSessionAttributeEmpty}`);
+      if(!isSessionAttributeEmpty)
+      {
+           console.log(`sessionAttributes Violated Slot is ${sessionAttributes.violatedSlot}`) ;
+           if(sessionAttributes.violatedSlot === validationResult.violatedSlot)
+           {
+              var fulfilmentResponse = buildFulfilmentResult('Fulfilled', 'I wish I could help you but unfortunately with provided details, I will not be able to proceed any further. \n Thank you for your visit and Have a Great Day!');
+              intentRequest.sessionAttributes = {};
+              return Promise.resolve(lexResponses.close(intentRequest.sessionAttributes, 
+                                                        fulfilmentResponse.fullfilmentState, 
+                                                        fulfilmentResponse.message));
+           }
+      }
+      var responseCard;
+      if(validationResult.isResponseCardRequired)
+      {
+        var options = buildOptions(validationResult.violatedSlot);
+        responseCard = buildResponseCard(validationResult.responseCardTitle,
                                              validationResult.responseCarSubtitle,
                                               options);
-        var outputSessionAttributes = 
-               createSessionAtributes(validationResult.violatedSlot,validationResult.violatedSlotOriginalValue);
-      
-        //console.log(`I have Output Session Attributes ${JSON.stringify(outputSessionAttributes)}`);
-        slots[`${validationResult.violatedSlot}`] = null;
-        var response = lexResponses.elicitSlot(outputSessionAttributes,
-                                                intentRequest.currentIntent.name,
-                                                slots,
-                                                validationResult.violatedSlot,
-                                                validationResult.message,
-                                                responseCard);
+      }  
+      slots[`${validationResult.violatedSlot}`] = null;
+      sessionAttributes = {};
+      sessionAttributes.violatedSlot = validationResult.violatedSlot;
+      var response = lexResponses.elicitSlot(sessionAttributes,
+                                              intentRequest.currentIntent.name,
+                                              slots,
+                                              validationResult.violatedSlot,
+                                              validationResult.message,
+                                              responseCard);
+      var strResponse = JSON.stringify(response);
+      console.log(strResponse);
+      return Promise.resolve(response); 
+    }
+    console.log('right outside the car km driven elicit slot construct');
+    if(carBrandName !== null && carModel !== null && carYearOfMake !== null && carVariant !== null && carKmDriven === null)
+    {
+        sessionAttributes = {};
+        console.log('inside Car Km Driven Elicit Slot construct');
+        var options = buildOptions('CarKmDriven');
+        responseCard = buildResponseCard('Specify Car Km Driven',
+                                         'Choose one of the options or mention exact figure',
+                                         options);
+        var message = { contentType: 'PlainText', content: 'Please mention number of Kms Car has been Driven so far \n choose one of the options or mention Km Driven figure e.g. 45677' };
+        var response = lexResponses.elicitSlot(sessionAttributes,
+                                              intentRequest.currentIntent.name,
+                                              slots,
+                                              'CarKmDriven',
+                                              message,
+                                              responseCard);
         var strResponse = JSON.stringify(response);
         console.log(strResponse);
         return Promise.resolve(response); 
-    }
-    else
-    { 
-      var isSessionAttributesEmpty = _.isEmpty(sessionAttributes);
-      console.log(`Session Attributes is empty check ${isSessionAttributesEmpty}`);
-      if(!isSessionAttributesEmpty)
-      {
-        intentRequest.currentIntent.slots[`${sessionAttributes.vliolatedSlot}`] =  `${sessionAttributes.violatedSlotOriginalValue}`;
-        intentRequest.sessionAttributes = {};
-      }
-      console.log('before checking car Kilometre driven 987987979797');
-      return Promise.resolve(lexResponses.delegate(intentRequest.sessionAttributes,
+    }  
+    console.log('before checking car Kilometre driven 987987979797');
+    return Promise.resolve(lexResponses.delegate(intentRequest.sessionAttributes,
 											                             intentRequest.currentIntent.slots));
-    } 
 };
 // Build a responseCard with a title, subtitle, and an optional set of options which should be displayed as buttons.
 function buildResponseCard (title, subTitle, options)
@@ -99,56 +129,26 @@ function buildResponseCard (title, subTitle, options)
      };
  }
 // Build a list of potential options for a given slot, to be used in responseCard generation.
-function buildOptions(violatedSlot, allSlots) {
-      if (violatedSlot === 'CarBrandName') {
-          return [
-              { text: `Yes, Continue with the ${allSlots.CarBrandName}`, value: 'Y' },
-          ];
-      } else if (violatedSlot === 'CarModel') {
-          // Return the next five weekdays.
-          const options = [];
-          return options;
-      } else if (violatedSlot === 'CarYearOfMake') {
-        const options = [];
-        return options;
-      }
-      else if (violatedSlot === 'CarVariant') {
-        const options = [];
-        return options;
-      }
-      else if (violatedSlot === 'CarKmDriven') {
-        return [
-            { text: '5000 - 12000', value: '5000 - 12000'},
-            { text: '12001 - 18000', value: '12001 - 18000'},
-            { text: '18001 - 24000', value: '18001 - 24000'},
-            { text: '24001 - 32000', value: '24001 - 32000'},
-            { text: '32001 - 40000', value: '32001 - 40000'},
-        ];
-      }
-      else if (violatedSlot === 'CarColor') {
-        const options = [];
-        const potentialDate = new Date();
-        return options;
-      }
-      else if (violatedSlot === 'NumberOfOwners') {
-        const options = [];
-        const potentialDate = new Date();
-        return options;
-      }
-      else if (violatedSlot === 'CarCity') {
-        const options = [];
-        const potentialDate = new Date();
-        return options;
-      }
-      else if (violatedSlot === 'ShortDescription') {
-        const options = [];
-        const potentialDate = new Date();
-        return options;
-      }
+function buildOptions(forSlot) {
+    if (forSlot === 'CarKmDriven') {
+      return [
+          { text: 'Less than 12000', value: 'Less than 12000'},
+          { text: '12001 - 18000', value: '12001 - 18000'},
+          { text: '18001 - 24000', value: '18001 - 24000'},
+          { text: '24001 - 32000', value: '24001 - 32000'},
+          { text: '32001 - 40000', value: '32001 - 40000'},
+      ];
+    }
  }
 function createSessionAtributes(violatedSlot,violatedSlotOriginalValue) {
   const outputSessionAttributes = {};
   outputSessionAttributes.vliolatedSlot = violatedSlot;
   outputSessionAttributes.violatedSlotOriginalValue = violatedSlotOriginalValue;
   return outputSessionAttributes;
+}
+function buildFulfilmentResult(fullfilmentState, messageContent) {
+  return {
+    fullfilmentState,
+    message: { contentType: 'PlainText', content: messageContent }
+  };
 }
