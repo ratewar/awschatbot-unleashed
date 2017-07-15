@@ -1,5 +1,6 @@
 'use strict';
 const _ = require('lodash');
+const isNumeric = require("isnumeric");
 module.exports.validateCarDetails = function (carBrandName,
                                                 carModel,
                                                 carYearOfMake,
@@ -66,9 +67,80 @@ module.exports.validateCarDetails = function (carBrandName,
                                         false);
         }
       }
+      if(carKmDriven)
+      {
+         console.log(`Inside Car Km Driven validation with value ${carKmDriven}`); 
+         const carKmDrivenValues = ['less than 12000','12001 - 18000','18001 - 24000','24001 - 32000','32001 - 40000']; 
+         var isCarKmDrivenValid = carKmDrivenValues.includes(carKmDriven.toLowerCase());
+         console.log('Car Km Driven is not in Array values');
+         if(!isCarKmDrivenValid)
+         {
+            console.log('checking if CarKmDriven is Numeric');
+            var isNumericFlag = isNumeric(carKmDriven);
+            console.log(`Car Km Driven is Numeric ${isNumericFlag}`);
+            if(isNumericFlag)
+            {
+                console.log('Car Km Driven is number now checking if it is less than 0');
+                if(carKmDriven <= 0)
+                {
+                  console.log(`Since Car Km Driven value is less than 0 : ${carKmDriven} hence creating False Validation Result`);
+                  return buildValidationResult(false, 
+                                        'CarKmDriven',
+                                        `I cannot take this ${carKmDriven} as Car Kms Driven figure.\n Specify Car Kms Driven either by choosing one of the options below or by mentioning exact Kms figure`,
+                                        'Specify Car Km Driven',
+                                        'Choose one of the options or mention exact figure',
+                                        true);
+                }
+            }
+            else
+            {
+              console.log('Car Km Driven is not a numeic hence creating false validation result');
+              return buildValidationResult(false, 
+                                        'CarKmDriven',
+                                        `I cannot take this ${carKmDriven} as Car Kms Driven figure.\n Specify Car Kms Driven either by choosing one of the options below or by mentioning exact Kms figure`,
+                                        'Specify Car Km Driven',
+                                        'Choose one of the options or mention exact figure',
+                                        true);
+            }
+         }
+      }
+      if(numberOfOwners)
+      {
+         console.log(`inside validation check for Number of Owners ${numberOfOwners}`);
+         var isNumericFlag = isNumeric(numberOfOwners); 
+         console.log(`value of numberOfOwners is ${isNumericFlag}`);
+         if(!isNumericFlag)
+         {
+              console.log('since number of owners is not numeric hence created a False Validation Result');
+              return buildValidationResult(false, 
+                                          'NumberOfOwners',
+                                          `Number of Owners has to be one of the values mentioned below or specify a number in the message box below`,
+                                          'Specify Car Number of Owners',
+                                          'Choose one of the options or mention number in the message box below',
+                                          true);      
+         }
+         else
+         {
+            
+            var isNumberOfOwnersValid = numberOfOwners > 0  && numberOfOwners <= 5; 
+            console.log(`Value of isNumberOfOwnersValid ${isNumberOfOwnersValid}`);
+            if(!isNumberOfOwnersValid)
+            {
+                console.log('Since Number of Owners is not within array hence creating false validation error');
+                return buildValidationResult(false, 
+                                          'NumberOfOwners',
+                                          `Number of Owners has to be one of the values mentioned below or specify a number in the message box below`,
+                                          'Specify Car Number of Owners',
+                                          'Choose one of the options or mention number in the message box below',
+                                          true);          
+            }
+         }
+      } 
       return buildValidationResult(true, null, null,null,null,null);
-  }
-function buildValidationResult(isValid, violatedSlot, messageContent, responseCardTitle, responseCarSubtitle,isResponseCardRequired) {
+}
+function buildValidationResult(isValid, violatedSlot, messageContent, 
+                                responseCardTitle, responseCarSubtitle,isResponseCardRequired)
+{
   if (messageContent === null) {
     return {
       isValid,

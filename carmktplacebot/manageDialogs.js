@@ -102,8 +102,28 @@ module.exports = function(intentRequest) {
         var strResponse = JSON.stringify(response);
         console.log(strResponse);
         return Promise.resolve(response); 
+    }
+    if(carBrandName !== null && carModel !== null && carYearOfMake !== null && 
+       carVariant !== null && carKmDriven !== null && carColor !== null && numberOfOwners === null)
+    {
+        sessionAttributes = {};
+        console.log('inside Number Of Owners Elicit Slot construct');
+        var options = buildOptions('NumberOfOwners');
+        responseCard = buildResponseCard('Specify Number of Owners',
+                                         'Choose one of the options below or Mention number in the message box below',
+                                         options);
+        var message = { contentType: 'PlainText', content: 'Please mention Number of Owners your Car have had so far \n Choose one of the options or mention number below in the message box'};
+        var response = lexResponses.elicitSlot(sessionAttributes,
+                                              intentRequest.currentIntent.name,
+                                              slots,
+                                              'NumberOfOwners',
+                                              message,
+                                              responseCard);
+        var strResponse = JSON.stringify(response);
+        console.log(strResponse);
+        return Promise.resolve(response); 
     }  
-    console.log('before checking car Kilometre driven 987987979797');
+    console.log('before Creting Delegate Response');
     return Promise.resolve(lexResponses.delegate(intentRequest.sessionAttributes,
 											                             intentRequest.currentIntent.slots));
 };
@@ -130,13 +150,24 @@ function buildResponseCard (title, subTitle, options)
  }
 // Build a list of potential options for a given slot, to be used in responseCard generation.
 function buildOptions(forSlot) {
-    if (forSlot === 'CarKmDriven') {
+    if (forSlot === 'CarKmDriven')
+    {
       return [
           { text: 'Less than 12000', value: 'Less than 12000'},
           { text: '12001 - 18000', value: '12001 - 18000'},
           { text: '18001 - 24000', value: '18001 - 24000'},
           { text: '24001 - 32000', value: '24001 - 32000'},
           { text: '32001 - 40000', value: '32001 - 40000'},
+      ];
+    }
+    else if (forSlot === 'NumberOfOwners')
+    {
+      return [
+          { text: 'Only one, me', value: 1},
+          { text: 'I am Second', value: 2},
+          { text: 'Including me 3', value: 3},
+          { text: 'Including me 4', value: 4},
+          { text: 'Including me 5', value: 5},
       ];
     }
  }
