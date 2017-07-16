@@ -18,3 +18,7 @@ $ sls deploy
 ## Other Sub projects to manage images upload for the marketplace
 
 1. S3 Image Upload : A website is available seperately to upload images into S3, please refer README.MD uploadimages folder
+
+## Architecture
+
+![TheBot](https://github.com/vikasbguru/awschatbot-unleashed/blob/master/architecture/arch.png)
