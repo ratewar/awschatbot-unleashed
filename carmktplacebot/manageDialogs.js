@@ -14,6 +14,11 @@ module.exports = function(intentRequest) {
   	const numberOfOwners = intentRequest.currentIntent.slots.NumberOfOwners;
   	const carCity = intentRequest.currentIntent.slots.CarCity;
   	const shortDescription = intentRequest.currentIntent.slots.ShortDescription;
+    const confirmationStatus = intentRequest.currentIntent.confirmationStatus;
+    const inputTranscript = intentRequest.inputTranscript;
+
+    console.log(`The CONFIRMATION STATUS IS ${confirmationStatus}`);
+    console.log(`The inputTranscript IS ${inputTranscript}`);
     console.log(` carBrandName ${carBrandName}`);
     console.log(` carModel ${carModel}`);
     console.log(` carYearOfMake ${carYearOfMake}`);
@@ -61,7 +66,7 @@ module.exports = function(intentRequest) {
                                                         fulfilmentResponse.fullfilmentState, 
                                                         fulfilmentResponse.message));
            }
-      }
+      }//end of if(!isSessionAttributeEmpty)
       var responseCard;
       if(validationResult.isResponseCardRequired)
       {
@@ -69,7 +74,7 @@ module.exports = function(intentRequest) {
         responseCard = buildResponseCard(validationResult.responseCardTitle,
                                              validationResult.responseCarSubtitle,
                                               options);
-      }  
+      }// end of if(validationResult.isResponseCardRequired)  
       slots[`${validationResult.violatedSlot}`] = null;
       sessionAttributes = {};
       sessionAttributes.violatedSlot = validationResult.violatedSlot;
@@ -82,47 +87,84 @@ module.exports = function(intentRequest) {
       var strResponse = JSON.stringify(response);
       console.log(strResponse);
       return Promise.resolve(response); 
+    }//end of  if (!validationResult.isValid)
+    console.log(`checking for Confirmation Status check ${confirmationStatus}`);
+    if(confirmationStatus !== 'Confirmed' && confirmationStatus !== 'Denied')
+    {  
+          console.log('right outside the car km driven elicit slot construct');
+          if(carBrandName !== null && carModel !== null && carYearOfMake !== null && carVariant !== null && carKmDriven === null)
+          {
+              sessionAttributes = {};
+              console.log('inside Car Km Driven Elicit Slot construct');
+              var options = buildOptions('CarKmDriven');
+              responseCard = buildResponseCard('Specify Car Km Driven',
+                                               'Choose one of the options or mention exact figure',
+                                               options);
+              var message = { contentType: 'PlainText', content: 'Please mention number of Kms Car has been Driven so far \n choose one of the options or mention Km Driven figure e.g. 45677' };
+              var response = lexResponses.elicitSlot(sessionAttributes,
+                                                    intentRequest.currentIntent.name,
+                                                    slots,
+                                                    'CarKmDriven',
+                                                    message,
+                                                    responseCard);
+              var strResponse = JSON.stringify(response);
+              console.log(strResponse);
+              return Promise.resolve(response); 
+          }//end of ElicitSlot response for Car Km Driven
+          if(carBrandName !== null && carModel !== null && carYearOfMake !== null && 
+             carVariant !== null && carKmDriven !== null && carColor !== null && numberOfOwners === null)
+          {
+              sessionAttributes = {};
+              console.log('inside Number Of Owners Elicit Slot construct');
+              var options = buildOptions('NumberOfOwners');
+              responseCard = buildResponseCard('Specify Number of Owners',
+                                               'Choose one of the options below or Mention number in the message box below',
+                                               options);
+              var message = { contentType: 'PlainText', content: 'Please mention Number of Owners your Car have had so far \n Choose one of the options or mention number below in the message box'};
+              var response = lexResponses.elicitSlot(sessionAttributes,
+                                                    intentRequest.currentIntent.name,
+                                                    slots,
+                                                    'NumberOfOwners',
+                                                    message,
+                                                    responseCard);
+              var strResponse = JSON.stringify(response);
+              console.log(strResponse);
+              return Promise.resolve(response); 
+          }//end of ElicitSlot response for Number of Owners
+          if(carBrandName !== null && carModel !== null && carYearOfMake !== null && 
+             carVariant !== null && carKmDriven !== null && carColor !== null && 
+             numberOfOwners !== null && carCity !== null && shortDescription !== null)  
+          {   
+              var message = { 
+                            contentType: 'PlainText', 
+                            content: `Great I have got all the details I need, do you want me to proceed further and put up your *Car for Auction* with following details:\n` + 
+                                     `1. Car Brand: *${carBrandName}* \n` +  
+                                     `2. Model: *${carModel}* \n` + 
+                                     `3. Variant: *${carVariant}* \n` +
+                                     `4. Color: *${carColor}* \n` + 
+                                     `5. Year of Make: *${carYearOfMake}* \n` +
+                                     `6. Kms Driven: *${carKmDriven}* \n` +
+                                     `7. No.of people who have owned your car: *${numberOfOwners}* \n` +
+                                     `8. Short Description: *${shortDescription}* \n` + 
+                                     `9. Your City: *${carCity}*`,
+              };
+              return Promise.resolve(lexResponses.confirmIntent(intentRequest.sessionAttributes,
+                                                            intentRequest.currentIntent.name,
+                                                            intentRequest.currentIntent.slots,
+                                                            message,
+                                                            null));      
+          }//end of Confirm Intent response  
     }
-    console.log('right outside the car km driven elicit slot construct');
-    if(carBrandName !== null && carModel !== null && carYearOfMake !== null && carVariant !== null && carKmDriven === null)
+    console.log(`checking for Denied value of confirmation status ${confirmationStatus}`);
+    if(confirmationStatus === 'Denied')
     {
-        sessionAttributes = {};
-        console.log('inside Car Km Driven Elicit Slot construct');
-        var options = buildOptions('CarKmDriven');
-        responseCard = buildResponseCard('Specify Car Km Driven',
-                                         'Choose one of the options or mention exact figure',
-                                         options);
-        var message = { contentType: 'PlainText', content: 'Please mention number of Kms Car has been Driven so far \n choose one of the options or mention Km Driven figure e.g. 45677' };
-        var response = lexResponses.elicitSlot(sessionAttributes,
-                                              intentRequest.currentIntent.name,
-                                              slots,
-                                              'CarKmDriven',
-                                              message,
-                                              responseCard);
-        var strResponse = JSON.stringify(response);
-        console.log(strResponse);
-        return Promise.resolve(response); 
-    }
-    if(carBrandName !== null && carModel !== null && carYearOfMake !== null && 
-       carVariant !== null && carKmDriven !== null && carColor !== null && numberOfOwners === null)
-    {
-        sessionAttributes = {};
-        console.log('inside Number Of Owners Elicit Slot construct');
-        var options = buildOptions('NumberOfOwners');
-        responseCard = buildResponseCard('Specify Number of Owners',
-                                         'Choose one of the options below or Mention number in the message box below',
-                                         options);
-        var message = { contentType: 'PlainText', content: 'Please mention Number of Owners your Car have had so far \n Choose one of the options or mention number below in the message box'};
-        var response = lexResponses.elicitSlot(sessionAttributes,
-                                              intentRequest.currentIntent.name,
-                                              slots,
-                                              'NumberOfOwners',
-                                              message,
-                                              responseCard);
-        var strResponse = JSON.stringify(response);
-        console.log(strResponse);
-        return Promise.resolve(response); 
-    }  
+        console.log('Inside Denied check and creating close response');
+        var fulfilmentResponse = buildFulfilmentResult('Fulfilled', 'Ok, Your Car will not be put up Auction, I hope you had a great experience talking to me. I will be happy to assist you again in future. \n Have a Great Day!');
+        intentRequest.sessionAttributes = {};
+        return Promise.resolve(lexResponses.close(intentRequest.sessionAttributes, 
+                                                        fulfilmentResponse.fullfilmentState, 
+                                                        fulfilmentResponse.message));   
+    }      
     console.log('before Creting Delegate Response');
     return Promise.resolve(lexResponses.delegate(intentRequest.sessionAttributes,
 											                             intentRequest.currentIntent.slots));

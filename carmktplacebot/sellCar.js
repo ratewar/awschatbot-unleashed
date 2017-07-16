@@ -5,6 +5,7 @@
 
 module.exports = function (intentRequest) {
 	const source = intentRequest.invocationSource;    
+	console.log(`Invoation Source is ----------------- ${source}`);
   	if (source === 'DialogCodeHook') {
         return handleDialogCodeHook(intentRequest);
     }

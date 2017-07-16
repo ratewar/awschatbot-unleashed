@@ -86,7 +86,7 @@ module.exports.validateCarDetails = function (carBrandName,
                   console.log(`Since Car Km Driven value is less than 0 : ${carKmDriven} hence creating False Validation Result`);
                   return buildValidationResult(false, 
                                         'CarKmDriven',
-                                        `I cannot take this ${carKmDriven} as Car Kms Driven figure.\n Specify Car Kms Driven either by choosing one of the options below or by mentioning exact Kms figure`,
+                                        `I cannot take ${carKmDriven} as Car Kms Driven figure.\n Specify Car Kms Driven either by choosing one of the options below or mention exact Kms figure`,
                                         'Specify Car Km Driven',
                                         'Choose one of the options or mention exact figure',
                                         true);
@@ -97,7 +97,7 @@ module.exports.validateCarDetails = function (carBrandName,
               console.log('Car Km Driven is not a numeic hence creating false validation result');
               return buildValidationResult(false, 
                                         'CarKmDriven',
-                                        `I cannot take this ${carKmDriven} as Car Kms Driven figure.\n Specify Car Kms Driven either by choosing one of the options below or by mentioning exact Kms figure`,
+                                        `I cannot take ${carKmDriven} as Car Kms Driven figure.\n Specify Car Kms Driven either by choosing one of the options below or mention exact Kms figure`,
                                         'Specify Car Km Driven',
                                         'Choose one of the options or mention exact figure',
                                         true);
