@@ -15,10 +15,10 @@ module.exports = function(intentRequest) {
   const numberOfOwners = intentRequest.currentIntent.slots.NumberOfOwners;
   const carCity = intentRequest.currentIntent.slots.CarCity;
   const shortDescription = intentRequest.currentIntent.slots.ShortDescription;
-  const maximumSellingPrice = slots.MaximumSellingPrice;
+  const maximumSellingPrice = intentRequest.currentIntent.slots.MaximumSellingPrice;
   const confirmationStatus = intentRequest.currentIntent.confirmationStatus;
-  const numberofDays = slots.NumberOfDays;
-  const emailAddress = slots.EmailAddress;
+  const numberofDays = intentRequest.currentIntent.slots.NumberOfDays;
+  const emailAddress = intentRequest.currentIntent.slots.EmailAddress;
   var userId = intentRequest.userId;
 
   return createCarBid(userId, 
@@ -62,7 +62,9 @@ function createCarBid(userId,carBrandName,carModel,
                                 carColor,
                                 numberOfOwners,
                                 carCity,
-                                shortDescription);
+                                shortDescription,
+                                maximumSellingPrice,
+                                numberofDays);
       var message = `Thanks, Your Car ${carBrandName} ${carModel} ${carYearOfMake} has been put up for bid. \r\n \r\n Please quote the following reference number to know the status of your bid: *${uniqueReferenceNumber}*`
       return buildFulfilmentResult('Fulfilled', message);
   });
@@ -70,7 +72,8 @@ function createCarBid(userId,carBrandName,carModel,
 function createBidChannel(dealerMarketPlaceResponse,channelName,uniqueReferenceNumber,
                             carBrandName,carModel,carYearOfMake,carVariant,
                             carKmDriven,carColor,numberOfOwners,carCity,
-                            shortDescription){
+                            shortDescription,maximumSellingPrice,
+                            numberofDays){
     console.log('*********************** Dealer Market Place Token is ');                                  
     dealerMarketPlaceResponse.Items.forEach(function(item) {
         console.log(" ***** " + item.security_token + ": " + item.market_place_type);
@@ -85,7 +88,9 @@ function createBidChannel(dealerMarketPlaceResponse,channelName,uniqueReferenceN
                                 carColor,
                                 numberOfOwners,
                                 carCity,
-                                shortDescription);
+                                shortDescription,
+                                maximumSellingPrice,
+                                numberofDays);
     });
 }
 function buildFulfilmentResult(fullfilmentState, messageContent) {

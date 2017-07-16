@@ -171,6 +171,12 @@ module.exports = function(intentRequest) {
              numberOfOwners !== null && carCity !== null && shortDescription !== null &&
              maximumSellingPrice !== null && numberofDays !== null && emailAddress !== null)  
            {   
+              emailAddress = emailAddress.substring(emailAddress.indexOf("|") + 1);
+              var today = new Date();
+              var endDay = new Date(today.getFullYear(),today.getMonth(),today.getDate() + numberofDays);
+              var auctionCreationDate = today.toISOString().substr(0,10);
+              var auctionExpiryDate = endDay.toISOString().substr(0,10);
+
               var message = { 
                             contentType: 'PlainText', 
                             content: `Great I have got all the details I need, do you want me to proceed further and put up your *Car for Auction* with following details:\n` + 
@@ -184,8 +190,10 @@ module.exports = function(intentRequest) {
                                      `8. No.of people who have owned your car: *${numberOfOwners}* \n` +
                                      `9. Short Description: *${shortDescription}* \n` + 
                                      `10. Your City: *${carCity}* \n` +
-                                     `11. Number of Days Your Car will be kept open for Auction: *${numberofDays}* \n` +
-                                     `12. Email Address: *${emailAddress}*`,
+                                     `11. Number of Days Your Car will be kept open for Auction: *${numberofDays} days* \n` +
+                                     `12. Auction Creation Date: *${auctionCreationDate}* \n` +
+                                     `13. Auction Expiry Date: *${auctionExpiryDate}* \n` +
+                                     `12. Your Email Address: *${emailAddress}*`,
               };
               return Promise.resolve(lexResponses.confirmIntent(intentRequest.sessionAttributes,
                                                             intentRequest.currentIntent.name,

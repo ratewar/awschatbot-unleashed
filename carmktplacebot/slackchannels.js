@@ -7,12 +7,15 @@ module.exports = function (securityToken,
                             uniqueReferenceNumber,
                             carBrandName,
                             carModel,
-                            carYearOfMake,carVariant,
+                            carYearOfMake,
+                            carVariant,
                             carKmDriven,
                             carColor,
                             numberOfOwners,
                             carCity,
-                            shortDescription){
+                            shortDescription,
+                            maximumSellingPrice,
+                            numberofDays){
     var url = "https://slack.com/api/channels.create";
     var options = {
       method: 'POST',
@@ -25,17 +28,24 @@ module.exports = function (securityToken,
     };
     request(options).then((response) => {
         console.log(`Channel id is ${response.channel.id}`);
-        //postMessage(securityToken,response.channel.id,"Kharid lo bhai : " + uniqueReferenceNumber);
+        var today = new Date();
+        var endDay = new Date(today.getFullYear(),today.getMonth(),today.getDate() + numberofDays);
+        var strCreateDate = today.toISOString().substr(0,10);
+        var strEndDate = endDay.toISOString().substr(0,10);
+
         var message = "For you as a valued Dealer, we have a another good vehicle up for sale. \r\n Here are the required details:\r\n" +
                       ">>> Car Brand : *" + carBrandName + "*" + "\r\n" +
                       "Car Model : *" + carModel + "*" + "\r\n" +
-                      "Year of Make : *" + carYearOfMake + "*" + "\r\n" +
                       "Car Variant : *" + carVariant + "*" + "\r\n" +
-                      "Km Driven : *" + carKmDriven + "*" + "\r\n" + 
-                      "Car Color : *" + carColor + "*" + "\r\n" + 
-                      "Number of owners including current one : *" + numberOfOwners + "*" + "\r\n" + 
-                      "Car City : *" + carCity + "*" + "\r\n" + 
+                      "Car Color : *" + carColor + "*" + "\r\n" +
+                      "Year of Make : *" + carYearOfMake + "*" + "\r\n" +
+                      "Kms Driven : *" + carKmDriven + "*" + "\r\n" + 
+                      "Expected Price: *INR." + maximumSellingPrice + "*" + "\r\n" +
+                      "No.of people who have owned your car : *" + numberOfOwners + "*" + "\r\n" + 
                       "Short shortDescription about the Vehicle : *" + shortDescription + "*" + "\r\n" +
+                      "Car available in City : *" + carCity + "*" + "\r\n" + 
+                      "Auction Creation Date : *" + strCreateDate + "*" + "\r\n" +
+                      "Auction Expiry Date: *" + strEndDate + "*" + "\r\n" +
                       "Use the following reference number to bid for the vehicle *" + uniqueReferenceNumber + "*" + "\r\n" +
                       "You can view images of the Car at following link: http://foo.com/";
         inviteDealers(securityToken,response.channel.id,message);

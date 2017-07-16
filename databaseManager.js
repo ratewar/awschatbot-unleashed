@@ -20,6 +20,7 @@ module.exports.createCarBid = function(userId,
                       					numberofDays,
                       					emailAddress) {
 	
+	emailAddress = emailAddress.substring(emailAddress.indexOf("|") + 1);
 	const item = {};
 	item.carId = uniqueReferenceNumber;
 	item.carBrandName = carBrandName;

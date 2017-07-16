@@ -15,7 +15,7 @@ function fullfilRequest(bidId) {
         var message = 'Thanks, your bid details are' + '\r\n';
         response.Items.forEach(function(item) {
             console.log(" -", item.dealer_name + ": " + item.bid_amount);
-            message +=   'Dealer Reference - ' + item.dealer_name + '\r\n' + 'Bid Amount is - ' + item.bid_amount + '\r\n';
+            message +=   'Dealer Reference - *' + item.dealer_name + '* Bid Amount is - *INR.' + item.bid_amount + '*' + '\r\n';
         });
         console.log('sending final message with bid details are ' + message);
         return buildFulfilmentResult('Fulfilled', message);
