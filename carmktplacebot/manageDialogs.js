@@ -6,6 +6,7 @@ const _ = require('lodash');
 
 module.exports = function(intentRequest) {
 
+    console.log('hello world');
    	const slots = intentRequest.currentIntent.slots;
     const carBrandName = slots.CarBrandName;
   	const carModel = slots.CarModel;
