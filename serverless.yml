@@ -100,6 +100,12 @@ functions:
     handler: handler.markBidInvalid
     events:
       - schedule: cron(0 10 * * ? *)
+  s3UploadTriggered:
+    handler: handler.s3UploadTriggered
+    events:
+      - s3:
+          bucket: awschatbotimagehost # Bucket will be created if it does not exists but make sure that its same bucket used by ImageUpload App and has CORS enabled
+          event: s3:ObjectCreated:Put
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details
