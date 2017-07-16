@@ -11,7 +11,7 @@
 #
 # Happy Coding!
 
-service: awschatbot-tech-unleashed # NOTE: update this with your service name
+service: awschatbot-tech-unleashed_new # NOTE: update this with your service name
 
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
@@ -143,55 +143,5 @@ functions:
 #     NewOutput:
 #       Description: "Description for the output"
 #       Value: "Some output value"
-resources:
- Resources:
-  CarBidMasterTable:
-     Type: AWS::DynamoDB::Table
-     Properties:
-       AttributeDefinitions:
-        - AttributeName: "bid_reference"
-          AttributeType: "S"
-       KeySchema:
-        - AttributeName: "bid_reference"
-          KeyType: "HASH"  
-       ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-       TableName: "car-bid-master"
-       StreamSpecification:
-          StreamViewType: NEW_IMAGE   
-  CarBidDetailsTable:
-     Type: AWS::DynamoDB::Table
-     Properties:
-       AttributeDefinitions:
-        - AttributeName: "bid_reference"
-          AttributeType: "S"
-        - AttributeName: "dealer_reference"
-          AttributeType: "S"  
-       KeySchema:
-        - AttributeName: "bid_reference"
-          KeyType: "HASH"
-        - AttributeName: "dealer_reference"
-          KeyType: "RANGE"    
-       ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-       TableName: "car-bid-details"  
-  DealerMarketPlaceTokens:
-     Type: AWS::DynamoDB::Table
-     Properties:
-       AttributeDefinitions:
-        - AttributeName: "market_place_type"
-          AttributeType: "S"
-        - AttributeName: "security_token"
-          AttributeType: "S"  
-       KeySchema:
-        - AttributeName: "market_place_type"
-          KeyType: "HASH"  
-        - AttributeName: "security_token"
-          KeyType: "RANGE"  
-       ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-       TableName: "dealer-market-place-tokens"  
+  
   

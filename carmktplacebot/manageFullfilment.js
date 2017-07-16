@@ -1,9 +1,8 @@
 'use strict';
-
 const lexResponses = require('./lexResponses');
 const slackChannelFactory = require('./slackchannels');
 const databaseManager = require('../databaseManager');
-var shortid = require('shortid');
+const shortid = require('shortid');
 
 module.exports = function(intentRequest) {
   

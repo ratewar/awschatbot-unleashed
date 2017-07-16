@@ -9,7 +9,6 @@
   "author": "Vikas Bajaj and Rajat Ratewal",
   "license": "ISC",
   "dependencies": {
-    "aws-sdk": "^2.82.0",
     "es6-promisify": "^5.0.0",
     "isnumeric": "^0.3.2",
     "lodash": "^4.17.4",

@@ -1,8 +1,6 @@
 'use strict';
-
- const handleDialogCodeHook = require('./manageDialogs');
- const handleFulfillmentCodeHook = require('./manageFullfilment');
-
+const handleFulfillmentCodeHook = require('./manageFullfilment');
+const handleDialogCodeHook = require('./manageDialogs');
 module.exports = function (intentRequest) {
 	const source = intentRequest.invocationSource;    
 	console.log(`Invoation Source is ----------------- ${source}`);

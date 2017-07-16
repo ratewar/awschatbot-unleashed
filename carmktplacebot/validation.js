@@ -1,7 +1,20 @@
 'use strict';
 const _ = require('lodash');
-const isNumeric = require("isnumeric");
-module.exports.validateCarDetails = function (carBrandName,
+const isNumeric = require('isnumeric');
+
+/*module.exports.validateCarDetails = function (carBrandName,
+                                                carModel,
+                                                carYearOfMake,
+                                                carVariant,
+                                                carKmDriven,
+                                                carColor,
+                                                numberOfOwners,
+                                                carCity,
+                                                shortDescription, 
+                                                maximumSellingPrice,
+                                                ​auctionExpire,
+                                                ​emailAddress) {*/
+  module.exports.validateCarDetails = function (carBrandName,
                                                 carModel,
                                                 carYearOfMake,
                                                 carVariant,
@@ -59,14 +72,14 @@ module.exports.validateCarDetails = function (carBrandName,
         }
         if(carYearOfMake < 2000)
         {
-          return buildValidationResult(false, 
+            return buildValidationResult(false, 
                                         'CarYearOfMake',
                                         `Dealer Market Place does not response well for Cars which has Year of Make earlier than 2000, pls check if the year entered was correct and then reenter`,
                                         null,
                                         null,
                                         false);
         }
-      }
+     }
       if(carKmDriven)
       {
          console.log(`Inside Car Km Driven validation with value ${carKmDriven}`); 
@@ -135,7 +148,54 @@ module.exports.validateCarDetails = function (carBrandName,
                                           true);          
             }
          }
-      } 
+      }
+      /*if(​auctionExpire)
+      {
+          console.log(`inside validation check for Auction Expire Days ${​auctionExpire}`);
+          var isAuctionExpireFlag = isNumeric(​auctionExpire); 
+          console.log(`value of isAuctionExpireFlag is ${isAuctionExpireFlag}`);
+          if(!isAuctionExpireFlag)
+          {
+              console.log('since Auction Expire is not numeric hence created a False Validation Result');
+              return buildValidationResult(false, 
+                                          '​AuctionExpire',
+                                          'Days for Auction Expire has to be one of the values mentioned below or specify a number in the message box below',
+                                          'Specify Days for Auction Expire',
+                                          'Choose one of the options or mention number in the message box below',
+                                          true);      
+          }
+          else
+          {
+            
+            //var is​AuctionExpireValid = ​auctionExpire === 1 || ​auctionExpire === 2 ​|| auctionExpire === 3 || auctionExpire === 4; 
+            var is​AuctionExpireValid = true;
+            console.log(`Value of is​AuctionExpireValid ${is​AuctionExpireValid}`);
+            if(!is​AuctionExpireValid)
+            {
+                console.log('Since Number of Owners is not within array hence creating false validation error');
+                return buildValidationResult(false, 
+                                          '​AuctionExpire',
+                                          'Days for Auction Expire has to be one of the values mentioned below or specify a number in the message box below',
+                                          'Specify Days for Auction Expire',
+                                          'Choose one of the options or mention number in the message box below',
+                                          true);      
+            }
+         }         
+      }
+      if(emailAddress)
+      {
+          //var iseEmailAddressValid = emailValidator.validate(emailAddress);
+          var iseEmailAddressValid = true;
+          if(!iseEmailAddressValid)
+          {
+              return buildValidationResult(false, 
+                                          'EmailAddress',
+                                          `I could not understand email address ${emailAddress}, kindly check if you entered your email correctly`,
+                                          null,
+                                          null,
+                                          false);
+          }
+      } */
       return buildValidationResult(true, null, null,null,null,null);
 }
 function buildValidationResult(isValid, violatedSlot, messageContent, 
