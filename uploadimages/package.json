@@ -1,0 +1,28 @@
+{
+  "name": "uploadimages",
+  "version": "1.0.0",
+  "description": "Uploading Images to S3",
+  "engines": {
+    "node": "6.11.1"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.85.0",
+    "ejs": "2.5.6",
+    "express": "4.15.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ratewar/uploadimages.git"
+  },
+  "main": "index.js",
+  "author": "Rajat Ratewal",
+  "keywords": [
+    "node",
+    "heroku",
+    "express"
+  ],
+  "license": "MIT"
+}

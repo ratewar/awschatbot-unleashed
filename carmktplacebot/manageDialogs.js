@@ -7,13 +7,6 @@ const _ = require('lodash');
 module.exports = function(intentRequest) {
 
     const slots = intentRequest.currentIntent.slots;
-   /* for (var key in slots) {
-      if (slots.hasOwnProperty(key)) {
-         console.log('Key is ' + key);
-         var val = slots[key];
-         console.log('value is : ' + val);
-      }
-    }*/
     const emailAddress = slots.EmailAddress;
     console.log(` email Address ${emailAddress}`);
     const carBrandName = slots.CarBrandName;
@@ -48,8 +41,6 @@ module.exports = function(intentRequest) {
     console.log(` carCity ${carCity}`);
     console.log(` shortDescription ${shortDescription}`);
     console.log(` number of days ${numberofDays}`);
-    
-
     const validationResult = validator.validateCarDetails(carBrandName,
                                                           carModel,
                                                           carYearOfMake,
@@ -61,6 +52,7 @@ module.exports = function(intentRequest) {
                                                           shortDescription,
                                                           numberofDays,
                                                           emailAddress);                                                      
+                                                     
     console.log(`validationResult.isValid value is ${validationResult.isValid} and violatedSlot is ${validationResult.violatedSlot}`);
     if (!validationResult.isValid)
     {
@@ -178,7 +170,7 @@ module.exports = function(intentRequest) {
              carVariant !== null && carKmDriven !== null && carColor !== null && 
              numberOfOwners !== null && carCity !== null && shortDescription !== null &&
              maximumSellingPrice !== null && numberofDays !== null && emailAddress !== null)  
-          {   
+           {   
               var message = { 
                             contentType: 'PlainText', 
                             content: `Great I have got all the details I need, do you want me to proceed further and put up your *Car for Auction* with following details:\n` + 

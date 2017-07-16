@@ -3,7 +3,7 @@ const _ = require('lodash');
 const isNumeric = require('isnumeric');
 var validator = require('validator');
 module.exports.validateCarDetails = function (carBrandName,
-                                                carModel,
+                                               carModel,
                                                 carYearOfMake,
                                                 carVariant,
                                                 carKmDriven,

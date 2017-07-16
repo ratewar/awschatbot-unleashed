@@ -5,6 +5,7 @@ const authorizer = require('./dealersmktplace/authorization');
 const submitBid = require('./dealersmktplace/bidForCar');
 const bidInactive = require('./markbidinactive/markInactive');
 const greetUser = require('./greetUser');
+const uploadedImages = require('./uploadimagetrigger/imageUploaded');
 
 module.exports.greetUser = (event, context, callback) => {
 	try {
@@ -79,6 +80,16 @@ module.exports.markBidInvalid = (event, context, callback) => {
 	try {
 		console.log("Called as part of Cron Job That runs Everyday at 10 am");
 		var response = bidInactive(event);
+		callback(null, response);
+	} catch(err) {
+		callback(err);
+	}
+};
+
+module.exports.s3UploadTriggered = (event, context, callback) => {
+try {
+		console.log("Called as part of AutoImage Upload to S3 Bucket");
+		var response = uploadedImages(event);
 		callback(null, response);
 	} catch(err) {
 		callback(err);
