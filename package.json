@@ -16,6 +16,7 @@
     "request": "^2.81.0",
     "request-promise": "^4.2.1",
     "shortid": "^2.2.8",
-    "url": "^0.11.0"
+    "url": "^0.11.0",
+    "validator": "^8.0.0"
   }
 }

@@ -15,6 +15,10 @@ module.exports = function(intentRequest) {
   const numberOfOwners = intentRequest.currentIntent.slots.NumberOfOwners;
   const carCity = intentRequest.currentIntent.slots.CarCity;
   const shortDescription = intentRequest.currentIntent.slots.ShortDescription;
+  const maximumSellingPrice = slots.MaximumSellingPrice;
+  const confirmationStatus = intentRequest.currentIntent.confirmationStatus;
+  const numberofDays = slots.NumberOfDays;
+  const emailAddress = slots.EmailAddress;
   var userId = intentRequest.userId;
 
   return createCarBid(userId, 
@@ -26,7 +30,10 @@ module.exports = function(intentRequest) {
                       carColor, 
                       numberOfOwners, 
                       carCity, 
-                      shortDescription).then(fullfiledOrder => {
+                      shortDescription,
+                      maximumSellingPrice,
+                      numberofDays,
+                      emailAddress).then(fullfiledOrder => {
     return lexResponses.close(intentRequest.sessionAttributes, 
                               fullfiledOrder.fullfilmentState, 
                               fullfiledOrder.message);
@@ -34,12 +41,15 @@ module.exports = function(intentRequest) {
 };
 function createCarBid(userId,carBrandName,carModel,
                       carYearOfMake,carVariant,carKmDriven,carColor, 
-                      numberOfOwners,carCity,shortDescription) {
+                      numberOfOwners,carCity,shortDescription,
+                      maximumSellingPrice,
+                      numberofDays,emailAddress) {
   var uniqueReferenceNumber = shortid.generate();
   return databaseManager.createCarBid(userId,carBrandName,carModel,
                                       carYearOfMake,carVariant,carKmDriven,
                                       carColor,numberOfOwners,carCity,
-                                      shortDescription,uniqueReferenceNumber).then(dealerMarketPlaceResponse => {
+                                      shortDescription,uniqueReferenceNumber,
+                                      maximumSellingPrice,numberofDays,emailAddress).then(dealerMarketPlaceResponse => {
       var channelName = uniqueReferenceNumber + "_" + carBrandName + "_" + carModel;
       createBidChannel(dealerMarketPlaceResponse,
                                 channelName,

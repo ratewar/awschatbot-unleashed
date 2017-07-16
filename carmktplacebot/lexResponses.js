@@ -97,4 +97,12 @@ module.exports.buildOptions = function(forSlot)
           { text: 'Including me 5', value: 5},
       ];
     }
+    else if (forSlot === 'NumberOfDays')
+    {
+      return [
+          { text: 'In 3 Days', value: 3},
+          { text: 'In 4 Days', value: 4},
+          { text: 'In 5 Days', value: 5},
+      ];
+    }
 }

@@ -15,8 +15,11 @@ module.exports.createCarBid = function(userId,
 										numberOfOwners,
 										carCity,
 										shortDescription,
-										uniqueReferenceNumber) {
-	console.log('createCarBid');
+										uniqueReferenceNumber,
+										maximumSellingPrice,
+                      					numberofDays,
+                      					emailAddress) {
+	
 	const item = {};
 	item.carId = uniqueReferenceNumber;
 	item.carBrandName = carBrandName;
@@ -30,6 +33,14 @@ module.exports.createCarBid = function(userId,
 	item.shortDescription = shortDescription;
 	item.userId = userId;
 	item.bid_reference = uniqueReferenceNumber;
+	item.maximum_selling_price  = maximumSellingPrice;
+	var today = new Date();
+	var endDay = new Date(today.getFullYear(),today.getMonth(),today.getDate() + numberofDays);
+	item.auction_create_date = today.toISOString().substr(0,10);
+	item.auction_end_date = endDay.toISOString().substr(0,10);
+	item.number_of_days = numberofDays;
+	item.email_address = emailAddress;
+
 	//item: it is a new bid record just created in saveItemToTable
 	return saveItemToTable('car-bid-master', item).then((item)=>{
 		var table = "dealer-market-place-tokens";

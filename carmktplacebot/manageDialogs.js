@@ -6,8 +6,16 @@ const _ = require('lodash');
 
 module.exports = function(intentRequest) {
 
-    console.log('hello world');
-   	const slots = intentRequest.currentIntent.slots;
+    const slots = intentRequest.currentIntent.slots;
+   /* for (var key in slots) {
+      if (slots.hasOwnProperty(key)) {
+         console.log('Key is ' + key);
+         var val = slots[key];
+         console.log('value is : ' + val);
+      }
+    }*/
+    const emailAddress = slots.EmailAddress;
+    console.log(` email Address ${emailAddress}`);
     const carBrandName = slots.CarBrandName;
   	const carModel = slots.CarModel;
   	const carYearOfMake = slots.CarYearOfMake;
@@ -19,6 +27,10 @@ module.exports = function(intentRequest) {
   	const shortDescription = slots.ShortDescription;
     const maximumSellingPrice = slots.MaximumSellingPrice;
     const confirmationStatus = intentRequest.currentIntent.confirmationStatus;
+    const numberofDays = slots.NumberOfDays;
+    
+    
+
     const inputTranscript = intentRequest.inputTranscript;
     const source = intentRequest.invocationSource;
     var userId = intentRequest.userId;
@@ -35,21 +47,9 @@ module.exports = function(intentRequest) {
     console.log(` numberOfOwners ${numberOfOwners}`);
     console.log(` carCity ${carCity}`);
     console.log(` shortDescription ${shortDescription}`);
+    console.log(` number of days ${numberofDays}`);
     
 
-  	
-    /*const validationResult = validator.validateCarDetails(carBrandName,
-                                                          carModel,
-                                                          carYearOfMake,
-                                                          carVariant,
-                                                          carKmDriven,
-                                                          carColor,
-                                                          numberOfOwners,
-                                                          carCity,
-                                                          shortDescription,
-                                                          maximumSellingPrice,
-                                                          ​auctionExpire,
-                                                          ​emailAddress);*/
     const validationResult = validator.validateCarDetails(carBrandName,
                                                           carModel,
                                                           carYearOfMake,
@@ -58,7 +58,9 @@ module.exports = function(intentRequest) {
                                                           carColor,
                                                           numberOfOwners,
                                                           carCity,
-                                                          shortDescription);                                                      
+                                                          shortDescription,
+                                                          numberofDays,
+                                                          emailAddress);                                                      
     console.log(`validationResult.isValid value is ${validationResult.isValid} and violatedSlot is ${validationResult.violatedSlot}`);
     if (!validationResult.isValid)
     {
@@ -103,11 +105,14 @@ module.exports = function(intentRequest) {
       console.log(strResponse);
       return Promise.resolve(response); 
     }//end of  if (!validationResult.isValid)
+    //*************************End of Validation*********************************
+
     console.log(`checking for Confirmation Status check ${confirmationStatus}`);
     if(confirmationStatus !== 'Confirmed' && confirmationStatus !== 'Denied')
     {  
           console.log('right outside the car km driven elicit slot construct');
-          if(carBrandName !== null && carModel !== null && carYearOfMake !== null && carVariant !== null && carKmDriven === null)
+          if(carBrandName !== null && carModel !== null && carYearOfMake !== null && 
+              carVariant !== null && carKmDriven === null)
           {
               sessionAttributes = {};
               console.log('inside Car Km Driven Elicit Slot construct');
@@ -115,7 +120,7 @@ module.exports = function(intentRequest) {
               responseCard = lexResponses.buildResponseCard('Specify Car Km Driven',
                                                'Choose one of the options or mention exact figure',
                                                options);
-              var message = { contentType: 'PlainText', content: 'Please mention number of Kms Car has been Driven so far \n choose one of the options or mention Km Driven figure e.g. 45677' };
+              var message = { contentType: 'PlainText', content: 'Please mention number of *Kms Car has been Driven* so far \n choose one of the options or mention Km Driven figure e.g. 45677' };
               var response = lexResponses.elicitSlot(sessionAttributes,
                                                     intentRequest.currentIntent.name,
                                                     slots,
@@ -135,7 +140,7 @@ module.exports = function(intentRequest) {
               responseCard = lexResponses.buildResponseCard('Specify Number of Owners',
                                                'Choose one of the options below or Mention number in the message box below',
                                                options);
-              var message = { contentType: 'PlainText', content: 'Please mention Number of Owners your Car have had so far \n Choose one of the options or mention number below in the message box'};
+              var message = { contentType: 'PlainText', content: 'Please mention *Number of Owners* your Car have had so far \n Choose one of the options or mention number below in the message box'};
               var response = lexResponses.elicitSlot(sessionAttributes,
                                                     intentRequest.currentIntent.name,
                                                     slots,
@@ -146,35 +151,33 @@ module.exports = function(intentRequest) {
               console.log(strResponse);
               return Promise.resolve(response); 
           }//end of ElicitSlot response for Number of Owners
-          /*if(carBrandName !== null && carModel !== null && carYearOfMake !== null && 
+          if(carBrandName !== null && carModel !== null && carYearOfMake !== null && 
              carVariant !== null && carKmDriven !== null && carColor !== null && 
              numberOfOwners !== null && carCity !== null && shortDescription !== null &&
-             maximumSellingPrice !== null && ​auctionExpire === null)
+             maximumSellingPrice !== null && numberofDays === null)
           {
               sessionAttributes = {};
               console.log('inside Auction Expire Elicit Slot construct');
-              var options = buildOptions('​AuctionExpire');
-              responseCard = buildResponseCard('Specify Number of Days for Auction Expire',
-                                               'Choose one of the options below or Mention number in the message box below',
-                                               options);
-              var message = { contentType: 'PlainText', content: 'Please mention Number of Days for Auction Expire \n Choose one of the options or mention number below in the message box'};
+              var options = lexResponses.buildOptions('NumberOfDays');
+              responseCard = lexResponses.buildResponseCard('Specify Number of Days for Auction Expire',
+                                                        'Choose one of the options below or Mention number in the message box below',
+                                                        options);
+              var message = { contentType: 'PlainText', content: 'We generally recommend to keep Auction open for *3 Days* however you may select any option below \n Choose one of the options below'};
               var response = lexResponses.elicitSlot(sessionAttributes,
                                                     intentRequest.currentIntent.name,
                                                     slots,
-                                                    '​AuctionExpire',
+                                                    'NumberOfDays',
                                                     message,
                                                     responseCard);
               var strResponse = JSON.stringify(response);
               console.log(strResponse);
               return Promise.resolve(response); 
           }//end of ElicitSlot response for Number of Owners*/
-          /*if(carBrandName !== null && carModel !== null && carYearOfMake !== null && 
-             carVariant !== null && carKmDriven !== null && carColor !== null && 
-             numberOfOwners !== null && carCity !== null && shortDescription !== null &&
-             maximumSellingPrice !== null && auctionExpire !== null && ​emailAddress !== null)  */
+
           if(carBrandName !== null && carModel !== null && carYearOfMake !== null && 
              carVariant !== null && carKmDriven !== null && carColor !== null && 
-             numberOfOwners !== null && carCity !== null && shortDescription !== null)    
+             numberOfOwners !== null && carCity !== null && shortDescription !== null &&
+             maximumSellingPrice !== null && numberofDays !== null && emailAddress !== null)  
           {   
               var message = { 
                             contentType: 'PlainText', 
@@ -184,10 +187,13 @@ module.exports = function(intentRequest) {
                                      `3. Variant: *${carVariant}* \n` +
                                      `4. Color: *${carColor}* \n` + 
                                      `5. Year of Make: *${carYearOfMake}* \n` +
-                                     `6. Kms Driven: *${carKmDriven}* \n` +
-                                     `7. No.of people who have owned your car: *${numberOfOwners}* \n` +
-                                     `8. Short Description: *${shortDescription}* \n` + 
-                                     `9. Your City: *${carCity}*`,
+                                     `6. Kms Driven: *${carKmDriven} Kms* \n` +
+                                     `7. Expected Price: *INR. ${maximumSellingPrice}* \n` +
+                                     `8. No.of people who have owned your car: *${numberOfOwners}* \n` +
+                                     `9. Short Description: *${shortDescription}* \n` + 
+                                     `10. Your City: *${carCity}* \n` +
+                                     `11. Number of Days Your Car will be kept open for Auction: *${numberofDays}* \n` +
+                                     `12. Email Address: *${emailAddress}*`,
               };
               return Promise.resolve(lexResponses.confirmIntent(intentRequest.sessionAttributes,
                                                             intentRequest.currentIntent.name,

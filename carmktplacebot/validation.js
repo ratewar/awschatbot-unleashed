@@ -1,8 +1,8 @@
 'use strict';
 const _ = require('lodash');
 const isNumeric = require('isnumeric');
-
-/*module.exports.validateCarDetails = function (carBrandName,
+var validator = require('validator');
+module.exports.validateCarDetails = function (carBrandName,
                                                 carModel,
                                                 carYearOfMake,
                                                 carVariant,
@@ -10,19 +10,9 @@ const isNumeric = require('isnumeric');
                                                 carColor,
                                                 numberOfOwners,
                                                 carCity,
-                                                shortDescription, 
-                                                maximumSellingPrice,
-                                                ​auctionExpire,
-                                                ​emailAddress) {*/
-  module.exports.validateCarDetails = function (carBrandName,
-                                                carModel,
-                                                carYearOfMake,
-                                                carVariant,
-                                                carKmDriven,
-                                                carColor,
-                                                numberOfOwners,
-                                                carCity,
-                                                shortDescription) {
+                                                shortDescription,
+                                                numberofDays,
+                                                emailAddress) {
      const carBrandNames = ['nissan', 'ford', 'jaguar', 'fiat', 'general motors', 'mahindra', 'bentley','bmw','mitsubishi','mazda','bugatti','buick','jeep','renault','datsun','acura','aston martin','maruti suzuki','tata','hyundai','isuzu','suzuki','honda','alfa romeo','audi','mercedes-benz','toyota'];
      if(carBrandName)
      {
@@ -149,53 +139,49 @@ const isNumeric = require('isnumeric');
             }
          }
       }
-      /*if(​auctionExpire)
+      if(numberofDays)
       {
-          console.log(`inside validation check for Auction Expire Days ${​auctionExpire}`);
-          var isAuctionExpireFlag = isNumeric(​auctionExpire); 
+          console.log(`inside validation check for Auction Expire Days ${numberofDays}`);
+          var isAuctionExpireFlag = isNumeric(numberofDays); 
           console.log(`value of isAuctionExpireFlag is ${isAuctionExpireFlag}`);
           if(!isAuctionExpireFlag)
           {
-              console.log('since Auction Expire is not numeric hence created a False Validation Result');
+              console.log('since Number of Days is not numeric hence created a False Validation Result');
               return buildValidationResult(false, 
-                                          '​AuctionExpire',
-                                          'Days for Auction Expire has to be one of the values mentioned below or specify a number in the message box below',
+                                          'NumberOfDays',
+                                          'Days for Auction Expire has to be one of the values mentioned below',
                                           'Specify Days for Auction Expire',
-                                          'Choose one of the options or mention number in the message box below',
+                                          'Choose one of the options below',
                                           true);      
           }
-          else
+          if(numberofDays < 3  || numberofDays > 5)
           {
-            
-            //var is​AuctionExpireValid = ​auctionExpire === 1 || ​auctionExpire === 2 ​|| auctionExpire === 3 || auctionExpire === 4; 
-            var is​AuctionExpireValid = true;
-            console.log(`Value of is​AuctionExpireValid ${is​AuctionExpireValid}`);
-            if(!is​AuctionExpireValid)
-            {
-                console.log('Since Number of Owners is not within array hence creating false validation error');
+                console.log('Since Number of Days is not within array hence creating false validation error' + numberofDays);
                 return buildValidationResult(false, 
-                                          '​AuctionExpire',
-                                          'Days for Auction Expire has to be one of the values mentioned below or specify a number in the message box below',
+                                          'NumberOfDays',
+                                          'Days for Auction Expire has to be one of the values mentioned below',
                                           'Specify Days for Auction Expire',
-                                          'Choose one of the options or mention number in the message box below',
+                                          'Choose one of the options below',
                                           true);      
-            }
-         }         
+          }         
       }
       if(emailAddress)
       {
-          //var iseEmailAddressValid = emailValidator.validate(emailAddress);
-          var iseEmailAddressValid = true;
-          if(!iseEmailAddressValid)
+          emailAddress = emailAddress.substring(emailAddress.indexOf("|") + 1);
+          console.log(`inside validation check for Email Address ${emailAddress}`);
+          var isValidEmailId = validator.isEmail(emailAddress); 
+          console.log(`value of isValidEmailId is ${isValidEmailId}`);
+          if(!isValidEmailId)
           {
+              console.log('since Email Address is not valid hence created a False Validation Result');
               return buildValidationResult(false, 
                                           'EmailAddress',
-                                          `I could not understand email address ${emailAddress}, kindly check if you entered your email correctly`,
+                                          'Please check your Email Address again',
                                           null,
                                           null,
-                                          false);
+                                          false);      
           }
-      } */
+      }
       return buildValidationResult(true, null, null,null,null,null);
 }
 function buildValidationResult(isValid, violatedSlot, messageContent, 
