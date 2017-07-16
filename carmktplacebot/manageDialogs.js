@@ -5,17 +5,23 @@ const databaseManager = require('../databaseManager');
 const _ = require('lodash');
 
 module.exports = function(intentRequest) {
-   	const carBrandName = intentRequest.currentIntent.slots.CarBrandName;
-  	const carModel = intentRequest.currentIntent.slots.CarModel;
-  	const carYearOfMake = intentRequest.currentIntent.slots.CarYearOfMake;
-  	const carVariant = intentRequest.currentIntent.slots.CarVariant;
-  	const carKmDriven = intentRequest.currentIntent.slots.CarKmDriven;
-  	const carColor = intentRequest.currentIntent.slots.CarColor;
-  	const numberOfOwners = intentRequest.currentIntent.slots.NumberOfOwners;
-  	const carCity = intentRequest.currentIntent.slots.CarCity;
-  	const shortDescription = intentRequest.currentIntent.slots.ShortDescription;
+
+   	const slots = intentRequest.currentIntent.slots;
+    const carBrandName = slots.CarBrandName;
+  	const carModel = slots.CarModel;
+  	const carYearOfMake = slots.CarYearOfMake;
+  	const carVariant = slots.CarVariant;
+  	const carKmDriven = slots.CarKmDriven;
+  	const carColor = slots.CarColor;
+  	const numberOfOwners = slots.NumberOfOwners;
+  	const carCity = slots.CarCity;
+  	const shortDescription = slots.ShortDescription;
+    const maximumSellingPrice = slots.MaximumSellingPrice;
     const confirmationStatus = intentRequest.currentIntent.confirmationStatus;
     const inputTranscript = intentRequest.inputTranscript;
+    const source = intentRequest.invocationSource;
+    var userId = intentRequest.userId;
+    var sessionAttributes = intentRequest.sessionAttributes;
 
     console.log(`The CONFIRMATION STATUS IS ${confirmationStatus}`);
     console.log(`The inputTranscript IS ${inputTranscript}`);
@@ -30,12 +36,8 @@ module.exports = function(intentRequest) {
     console.log(` shortDescription ${shortDescription}`);
     
 
-  	const source = intentRequest.invocationSource;
-  	var userId = intentRequest.userId;
-  	const slots = intentRequest.currentIntent.slots;
-    var sessionAttributes = intentRequest.sessionAttributes;
-    
-	  const validationResult = validator.validateCarDetails(carBrandName,
+  	
+    /*const validationResult = validator.validateCarDetails(carBrandName,
                                                           carModel,
                                                           carYearOfMake,
                                                           carVariant,
@@ -43,7 +45,19 @@ module.exports = function(intentRequest) {
                                                           carColor,
                                                           numberOfOwners,
                                                           carCity,
-                                                          shortDescription);
+                                                          shortDescription,
+                                                          maximumSellingPrice,
+                                                          ​auctionExpire,
+                                                          ​emailAddress);*/
+    const validationResult = validator.validateCarDetails(carBrandName,
+                                                          carModel,
+                                                          carYearOfMake,
+                                                          carVariant,
+                                                          carKmDriven,
+                                                          carColor,
+                                                          numberOfOwners,
+                                                          carCity,
+                                                          shortDescription);                                                      
     console.log(`validationResult.isValid value is ${validationResult.isValid} and violatedSlot is ${validationResult.violatedSlot}`);
     if (!validationResult.isValid)
     {
@@ -60,7 +74,7 @@ module.exports = function(intentRequest) {
            console.log(`sessionAttributes Violated Slot is ${sessionAttributes.violatedSlot}`) ;
            if(sessionAttributes.violatedSlot === validationResult.violatedSlot)
            {
-              var fulfilmentResponse = buildFulfilmentResult('Fulfilled', 'I wish I could help you but unfortunately with provided details, I will not be able to proceed any further. \n Thank you for your visit and Have a Great Day!');
+              var fulfilmentResponse = lexResponses.buildFulfilmentResult('Fulfilled', 'I wish I could help you but unfortunately with provided details, I will not be able to proceed any further. \n Thank you for your visit and Have a Great Day!');
               intentRequest.sessionAttributes = {};
               return Promise.resolve(lexResponses.close(intentRequest.sessionAttributes, 
                                                         fulfilmentResponse.fullfilmentState, 
@@ -70,8 +84,8 @@ module.exports = function(intentRequest) {
       var responseCard;
       if(validationResult.isResponseCardRequired)
       {
-        var options = buildOptions(validationResult.violatedSlot);
-        responseCard = buildResponseCard(validationResult.responseCardTitle,
+        var options = lexResponses.buildOptions(validationResult.violatedSlot);
+        responseCard = lexResponses.buildResponseCard(validationResult.responseCardTitle,
                                              validationResult.responseCarSubtitle,
                                               options);
       }// end of if(validationResult.isResponseCardRequired)  
@@ -96,8 +110,8 @@ module.exports = function(intentRequest) {
           {
               sessionAttributes = {};
               console.log('inside Car Km Driven Elicit Slot construct');
-              var options = buildOptions('CarKmDriven');
-              responseCard = buildResponseCard('Specify Car Km Driven',
+              var options = lexResponses.buildOptions('CarKmDriven');
+              responseCard = lexResponses.buildResponseCard('Specify Car Km Driven',
                                                'Choose one of the options or mention exact figure',
                                                options);
               var message = { contentType: 'PlainText', content: 'Please mention number of Kms Car has been Driven so far \n choose one of the options or mention Km Driven figure e.g. 45677' };
@@ -116,8 +130,8 @@ module.exports = function(intentRequest) {
           {
               sessionAttributes = {};
               console.log('inside Number Of Owners Elicit Slot construct');
-              var options = buildOptions('NumberOfOwners');
-              responseCard = buildResponseCard('Specify Number of Owners',
+              var options = lexResponses.buildOptions('NumberOfOwners');
+              responseCard = lexResponses.buildResponseCard('Specify Number of Owners',
                                                'Choose one of the options below or Mention number in the message box below',
                                                options);
               var message = { contentType: 'PlainText', content: 'Please mention Number of Owners your Car have had so far \n Choose one of the options or mention number below in the message box'};
@@ -131,9 +145,35 @@ module.exports = function(intentRequest) {
               console.log(strResponse);
               return Promise.resolve(response); 
           }//end of ElicitSlot response for Number of Owners
+          /*if(carBrandName !== null && carModel !== null && carYearOfMake !== null && 
+             carVariant !== null && carKmDriven !== null && carColor !== null && 
+             numberOfOwners !== null && carCity !== null && shortDescription !== null &&
+             maximumSellingPrice !== null && ​auctionExpire === null)
+          {
+              sessionAttributes = {};
+              console.log('inside Auction Expire Elicit Slot construct');
+              var options = buildOptions('​AuctionExpire');
+              responseCard = buildResponseCard('Specify Number of Days for Auction Expire',
+                                               'Choose one of the options below or Mention number in the message box below',
+                                               options);
+              var message = { contentType: 'PlainText', content: 'Please mention Number of Days for Auction Expire \n Choose one of the options or mention number below in the message box'};
+              var response = lexResponses.elicitSlot(sessionAttributes,
+                                                    intentRequest.currentIntent.name,
+                                                    slots,
+                                                    '​AuctionExpire',
+                                                    message,
+                                                    responseCard);
+              var strResponse = JSON.stringify(response);
+              console.log(strResponse);
+              return Promise.resolve(response); 
+          }//end of ElicitSlot response for Number of Owners*/
+          /*if(carBrandName !== null && carModel !== null && carYearOfMake !== null && 
+             carVariant !== null && carKmDriven !== null && carColor !== null && 
+             numberOfOwners !== null && carCity !== null && shortDescription !== null &&
+             maximumSellingPrice !== null && auctionExpire !== null && ​emailAddress !== null)  */
           if(carBrandName !== null && carModel !== null && carYearOfMake !== null && 
              carVariant !== null && carKmDriven !== null && carColor !== null && 
-             numberOfOwners !== null && carCity !== null && shortDescription !== null)  
+             numberOfOwners !== null && carCity !== null && shortDescription !== null)    
           {   
               var message = { 
                             contentType: 'PlainText', 
@@ -159,7 +199,7 @@ module.exports = function(intentRequest) {
     if(confirmationStatus === 'Denied')
     {
         console.log('Inside Denied check and creating close response');
-        var fulfilmentResponse = buildFulfilmentResult('Fulfilled', 'Ok, Your Car will not be put up Auction, I hope you had a great experience talking to me. I will be happy to assist you again in future. \n Have a Great Day!');
+        var fulfilmentResponse = lexResponses.buildFulfilmentResult('Fulfilled', 'Ok, Your Car will not be put up Auction, I hope you had a great experience talking to me. I will be happy to assist you again in future. \n Have a Great Day!');
         intentRequest.sessionAttributes = {};
         return Promise.resolve(lexResponses.close(intentRequest.sessionAttributes, 
                                                         fulfilmentResponse.fullfilmentState, 
@@ -169,59 +209,6 @@ module.exports = function(intentRequest) {
     return Promise.resolve(lexResponses.delegate(intentRequest.sessionAttributes,
 											                             intentRequest.currentIntent.slots));
 };
-// Build a responseCard with a title, subtitle, and an optional set of options which should be displayed as buttons.
-function buildResponseCard (title, subTitle, options)
- {
-     let buttons = null;
-     if (options != null && options.length > 0)
-     {
-         buttons = [];
-         for (let i = 0; i < Math.min(5, options.length); i++) {
-             buttons.push(options[i]);
-         }
-     }
-     return {
-         contentType: 'application/vnd.amazonaws.card.generic',
-         version: 1,
-         genericAttachments: [{
-             title,
-             subTitle,
-             buttons,
-         }],
-     };
- }
-// Build a list of potential options for a given slot, to be used in responseCard generation.
-function buildOptions(forSlot) {
-    if (forSlot === 'CarKmDriven')
-    {
-      return [
-          { text: 'Less than 12000', value: 'Less than 12000'},
-          { text: '12001 - 18000', value: '12001 - 18000'},
-          { text: '18001 - 24000', value: '18001 - 24000'},
-          { text: '24001 - 32000', value: '24001 - 32000'},
-          { text: '32001 - 40000', value: '32001 - 40000'},
-      ];
-    }
-    else if (forSlot === 'NumberOfOwners')
-    {
-      return [
-          { text: 'Only one, me', value: 1},
-          { text: 'I am Second', value: 2},
-          { text: 'Including me 3', value: 3},
-          { text: 'Including me 4', value: 4},
-          { text: 'Including me 5', value: 5},
-      ];
-    }
- }
-function createSessionAtributes(violatedSlot,violatedSlotOriginalValue) {
-  const outputSessionAttributes = {};
-  outputSessionAttributes.vliolatedSlot = violatedSlot;
-  outputSessionAttributes.violatedSlotOriginalValue = violatedSlotOriginalValue;
-  return outputSessionAttributes;
-}
-function buildFulfilmentResult(fullfilmentState, messageContent) {
-  return {
-    fullfilmentState,
-    message: { contentType: 'PlainText', content: messageContent }
-  };
-}
+
+
+
