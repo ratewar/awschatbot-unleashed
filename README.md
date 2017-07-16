@@ -21,4 +21,4 @@ $ sls deploy
 
 ## Architecture
 
-![TheBot](https://raw.githubusercontent.com/vikasbguru/awschatbot-unleashed/blob/master/architecture/arch.png)
+![TheBot](https://github.com/vikasbguru/awschatbot-unleashed/blob/master/architecture/arch.png)
