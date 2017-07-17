@@ -3,6 +3,10 @@ const querystring = require('querystring');
 const request = require('request-promise');
 const date = require('date-and-time');
 
+/*added by ratewar*/
+const databaseManager = require('../databaseManager');
+
+
 module.exports = function (securityToken,
                             channelName,
                             uniqueReferenceNumber,
@@ -35,7 +39,17 @@ module.exports = function (securityToken,
         let auctionExpiryDate = date.format(tempAuctionExpiryDate,'YYYY-MM-DD');
         //Need to fetch the S3 URL and append in the message below
         //RAJAT RATEWAL
-        var message = "For you as a valued Dealer, we have a another good vehicle up for sale. \r\n Here are the required details:\r\n" +
+
+        return databaseManager.checkImageUpload(uniqueReferenceNumber).then(response => {
+                console.log('Bid Reference Passed:' + uniqueReferenceNumber);
+                var filenames='';
+                response.Items.forEach(function(item) {
+                          console.log(" -", item.filename);
+                          filenames+=item.filename + ";";
+                });
+
+            
+                 var message = "For you as a valued Dealer, we have a another good vehicle up for sale. \r\n Here are the required details:\r\n" +
                       ">>> Car Brand : *" + carBrandName + "*" + "\r\n" +
                       "Car Model : *" + carModel + "*" + "\r\n" +
                       "Car Variant : *" + carVariant + "*" + "\r\n" +
@@ -49,8 +63,11 @@ module.exports = function (securityToken,
                       "Auction Creation Date : *" + auctionCreateDate + "*" + "\r\n" +
                       "Auction Expiry Date: *" + auctionExpiryDate + "*" + "\r\n" +
                       "Use the following reference number to bid for the vehicle *" + uniqueReferenceNumber + "*" + "\r\n" +
-                      "You can view images of the Car at following link: http://foo.com/";
-        inviteDealers(securityToken,response.channel.id,message);
+                      "You can view images of the Car at following links:" + filenames;
+                  inviteDealers(securityToken,response.channel.id,message);  
+                });
+
+       
     }).catch(function(error){
         console.log('inside the catch block with error ' + error);
     });
