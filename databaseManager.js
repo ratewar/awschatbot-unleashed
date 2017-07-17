@@ -1,13 +1,13 @@
 'use strict';
 
-const utility = require('./utilitymethod');
+const date = require('date-and-time');
 const AWS = require('aws-sdk');
 const promisify = require('es6-promisify');
 const _ = require('lodash');
 const dynamo = new AWS.DynamoDB.DocumentClient();
 
 module.exports.createCarBid = function(userId,
-										carBrandName, 
+										carBrandName,
 										carModel,
 										carYearOfMake,
 										carVariant,
@@ -18,9 +18,9 @@ module.exports.createCarBid = function(userId,
 										shortDescription,
 										uniqueReferenceNumber,
 										maximumSellingPrice,
-                      					numberofDays,
-                      					emailAddress) {
-	
+                    numberofDays,
+                    emailAddress) {
+
 	const item = {};
 	item.carId = uniqueReferenceNumber;
 	item.carBrandName = carBrandName;
@@ -35,8 +35,12 @@ module.exports.createCarBid = function(userId,
 	item.userId = userId;
 	item.bid_reference = uniqueReferenceNumber;
 	item.maximum_selling_price  = maximumSellingPrice;
-	item.auction_create_date = utility.currentDateInStringFormat();
-	item.auction_end_date = utility.addDaysInTodayDate(numberofDays);
+	let now = new Date();
+	let auctionCreateDate = date.format(now,'DD-MMM-YYY');
+	let tempAuctionExpiryDate = date.addDays(now,numberofDays);
+	let auctionExpiryDate = date.format(tempAuctionExpiryDate,'DD-MMM-YYY');
+	item.auction_create_date = auctionCreateDate;
+	item.auction_end_date = auctionExpiryDate;
 	item.number_of_days = numberofDays;
 	item.email_address = utility.formatEmailAddress(emailAddress);;
 
@@ -50,7 +54,7 @@ module.exports.createCarBid = function(userId,
 		    		ExpressionAttributeValues : {
 		      			":a":marketPlaceType
 		    		}
-		    	}	
+		    	}
             	const getAsync = promisify(dynamo.query, dynamo);
     			return getAsync(params).then(response => {
 		    		if (_.isEmpty(response)) {
@@ -59,7 +63,7 @@ module.exports.createCarBid = function(userId,
 		    		}
 	    			console.log(response);
 	    			return response;
-  				});	    
+  				});
 	});
 };
 module.exports.findBids = function(bidRef) {
@@ -88,7 +92,7 @@ module.exports.recordBidSubmission = function(bidReference,dealerName,dealerSlac
 	item.bid_amount = bidAmount;
 	//item: it is a new bid record just created in saveItemToTable
 	return saveItemToTable('car-bid-details', item).then((item)=>{
-		return Promise.resolve(item);  
+		return Promise.resolve(item);
 	});
 };
 function saveItemToTable(tableName, item) {
