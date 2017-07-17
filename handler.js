@@ -7,7 +7,7 @@ const bidInactive = require('./markbidinactive/markInactive');
 const greetUser = require('./greetUser');
 const uploadedImages = require('./uploadimagetrigger/imageUploaded');
 
-module.exports.greetUser = (event, context, callback) => {
+/*module.exports.greetUser = (event, context, callback) => {
 	try {
 	    console.log(`event.bot.name=${event.bot.name}`);
 	    dispatch(event).then(response => {
@@ -16,12 +16,12 @@ module.exports.greetUser = (event, context, callback) => {
 	} catch (err) {
 	    callback(err);
 	}
-};
+};*/
 module.exports.intents = (event, context, callback) => {
 	try {
 	    console.log(`event.bot.name=${event.bot.name}`);
 	    dispatch(event).then(response => {
-	    	console.log(`final Response 10000000000 ${JSON.stringify(response)}`);
+	    	console.log(`final Response ${JSON.stringify(response)}`);
 	    	callback(null, response);
 	    });
 	} catch (err) {

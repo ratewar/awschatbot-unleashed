@@ -1,4 +1,5 @@
 'use strict';
+const utility = require('../utilitymethod');
 const lexResponses = require('./lexResponses');
 const validator = require('./validation');
 const databaseManager = require('../databaseManager');
@@ -171,12 +172,9 @@ module.exports = function(intentRequest) {
              numberOfOwners !== null && carCity !== null && shortDescription !== null &&
              maximumSellingPrice !== null && numberofDays !== null && emailAddress !== null)  
            {   
-              emailAddress = emailAddress.substring(emailAddress.indexOf("|") + 1);
-              var today = new Date();
-              var endDay = new Date(today.getFullYear(),today.getMonth(),today.getDate() + numberofDays);
-              var auctionCreationDate = today.toISOString().substr(0,10);
-              var auctionExpiryDate = endDay.toISOString().substr(0,10);
-
+              emailAddress = utility.formatEmailAddress(emailAddress);
+              var auctionCreationDate = utility.currentDateInStringFormat();
+              var auctionExpiryDate = utility.addDaysInTodayDate(numberofDays);
               var message = { 
                             contentType: 'PlainText', 
                             content: `Great I have got all the details I need, do you want me to proceed further and put up your *Car for Auction* with following details:\n` + 

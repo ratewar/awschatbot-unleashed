@@ -2,7 +2,7 @@
 
 const sellCar = require('./sellCar');
 const showMyBids = require('./showMyBids');
-const greetUser = require('../greetUser');
+const greetUser = require('./greetUser');
 module.exports = function(intentRequest) {
   	console.log(`dispatch userId=${intentRequest.userId}, intentName=${intentRequest.currentIntent.name}`);
   	const intentName = intentRequest.currentIntent.name;
