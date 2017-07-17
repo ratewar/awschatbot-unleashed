@@ -2,6 +2,7 @@
 const _ = require('lodash');
 const isNumeric = require('isnumeric');
 var validator = require('validator');
+const promisify = require('es6-promisify');
 const databaseManager = require('../databaseManager');
 module.exports.validateCarDetails = function (carBrandName,
                                                carModel,
@@ -75,20 +76,14 @@ module.exports.validateCarDetails = function (carBrandName,
      }
       if(carKmDriven)
       {
-         console.log(`Inside Car Km Driven validation with value ${carKmDriven}`); 
          var isCarKmDrivenValid = carKmDrivenValues.includes(carKmDriven.toLowerCase());
-         console.log('Car Km Driven is not in Array values');
          if(!isCarKmDrivenValid)
          {
-            console.log('checking if CarKmDriven is Numeric');
             var isNumericFlag = isNumeric(carKmDriven);
-            console.log(`Car Km Driven is Numeric ${isNumericFlag}`);
             if(isNumericFlag)
             {
-                console.log('Car Km Driven is number now checking if it is less than 0');
                 if(carKmDriven <= 0)
                 {
-                  console.log(`Since Car Km Driven value is less than 0 : ${carKmDriven} hence creating False Validation Result`);
                   return buildValidationResult(false, 
                                         'CarKmDriven',
                                         `I cannot take ${carKmDriven} as Car Kms Driven figure.\n Specify Car Kms Driven either by choosing one of the options below or mention exact Kms figure`,
@@ -99,7 +94,6 @@ module.exports.validateCarDetails = function (carBrandName,
             }
             else
             {
-              console.log('Car Km Driven is not a numeic hence creating false validation result');
               return buildValidationResult(false, 
                                         'CarKmDriven',
                                         `I cannot take ${carKmDriven} as Car Kms Driven figure.\n Specify Car Kms Driven either by choosing one of the options below or mention exact Kms figure`,
@@ -111,12 +105,9 @@ module.exports.validateCarDetails = function (carBrandName,
       }
       if(numberOfOwners)
       {
-         console.log(`inside validation check for Number of Owners ${numberOfOwners}`);
          var isNumericFlag = isNumeric(numberOfOwners); 
-         console.log(`value of numberOfOwners is ${isNumericFlag}`);
          if(!isNumericFlag)
          {
-              console.log('since number of owners is not numeric hence created a False Validation Result');
               return buildValidationResult(false, 
                                           'NumberOfOwners',
                                           `Number of Owners has to be one of the values mentioned below or specify a number in the message box below`,
@@ -126,12 +117,9 @@ module.exports.validateCarDetails = function (carBrandName,
          }
          else
          {
-            
             var isNumberOfOwnersValid = numberOfOwners > 0  && numberOfOwners <= 5; 
-            console.log(`Value of isNumberOfOwnersValid ${isNumberOfOwnersValid}`);
             if(!isNumberOfOwnersValid)
             {
-                console.log('Since Number of Owners is not within array hence creating false validation error');
                 return buildValidationResult(false, 
                                           'NumberOfOwners',
                                           `Number of Owners has to be one of the values mentioned below or specify a number in the message box below`,
@@ -143,13 +131,10 @@ module.exports.validateCarDetails = function (carBrandName,
       }
       if(numberofDays)
       {
-          console.log(`inside validation check for Auction Expire Days ${numberofDays}`);
           var isAuctionExpireFlag = isNumeric(numberofDays); 
-          console.log(`value of isAuctionExpireFlag is ${isAuctionExpireFlag}`);
           if(!isAuctionExpireFlag)
           {
-              console.log('since Number of Days is not numeric hence created a False Validation Result');
-              return buildValidationResult(false, 
+             return buildValidationResult(false, 
                                           'NumberOfDays',
                                           'Days for Auction Expire has to be one of the values mentioned below',
                                           'Specify Days for Auction Expire',
@@ -158,7 +143,6 @@ module.exports.validateCarDetails = function (carBrandName,
           }
           if(numberofDays < 3  || numberofDays > 5)
           {
-                console.log('Since Number of Days is not within array hence creating false validation error' + numberofDays);
                 return buildValidationResult(false, 
                                           'NumberOfDays',
                                           'Days for Auction Expire has to be one of the values mentioned below',
@@ -170,12 +154,9 @@ module.exports.validateCarDetails = function (carBrandName,
       if(emailAddress)
       {
           var localEmailAddress = emailAddress.substring(emailAddress.indexOf("|") + 1);
-          console.log(`inside validation check for Email Address ${localEmailAddress}`);
           var isValidEmailId = validator.isEmail(localEmailAddress); 
-          console.log(`value of isValidEmailId is ${isValidEmailId}`);
           if(!isValidEmailId)
           {
-              console.log('since Email Address is not valid hence created a False Validation Result');
               return buildValidationResult(false, 
                                           'EmailAddress',
                                           'Please check your Email Address again',
@@ -189,32 +170,12 @@ module.exports.validateCarDetails = function (carBrandName,
           console.log(`inside validation check for Image Upload ${imageUpload}`);
           if(imageUpload !== 'N' && imageUpload !== 'Y')
           {
-              console.log('Image Upload value is incorrect hence created a False Validation Result');
               return buildValidationResult(false, 
                                           'ImageUpload',
                                           '*Post Upload* images click on *Have Uploaded* or *Have No Images* if you don not want',
                                           'Specify your input by selecting an option below',
                                           'Choose one of the options below',
                                           true);      
-          }
-          if(imageUpload === 'Y')
-          {
-              console.log('Because Image Upload value is Y');
-              databaseManager.checkImageUpload(uniqueReferenceNumber).then(response => {
-                  if(_.isEmpty(response))
-                  {
-                      return buildValidationResult(false, 
-                                                   'ImageUpload',
-                                                   '*Post Upload* images click on *Have Uploaded* or *Have No Images* if you don not want',
-                                                   'Specify your input by selecting an option below',
-                                                   'Choose one of the options below',
-                                                   true);        
-                  }
-                  else
-                  {
-                      console.log(`Hurray ---------- Found Images ${JSON.stringify(response)}`);  
-                  }
-              });
           }
       }
       return buildValidationResult(true, null, null,null,null,null);

@@ -33,10 +33,13 @@ module.exports.createCarBid = function(userId,
 	item.userId = userId;
 	item.bid_reference = uniqueReferenceNumber;
 	item.maximum_selling_price  = maximumSellingPrice;
+	item.is_action = 'Y';
+
 	let now = new Date();
-	let auctionCreateDate = date.format(now,'DD-MMM-YYY');
+	let auctionCreateDate = date.format(now,'YYYY-MM-DD');
 	let tempAuctionExpiryDate = date.addDays(now,numberofDays);
-	let auctionExpiryDate = date.format(tempAuctionExpiryDate,'DD-MMM-YYY');
+	let auctionExpiryDate = date.format(tempAuctionExpiryDate,'YYYY-MM-DD');
+	
 	console.log(`Auction Creation Date is ${auctionCreateDate}`);
 	console.log(`Auction Expiry Date is ${auctionExpiryDate}`);
 	item.auction_create_date = auctionCreateDate;

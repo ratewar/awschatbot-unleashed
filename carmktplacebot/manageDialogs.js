@@ -37,7 +37,6 @@ module.exports = function(intentRequest) {
        sessionAttributes = {};
        sessionAttributes.uniqueReferenceNumber = uniqueReferenceNumber;
     }
-    console.log(`I have decided to print Session Attributes AFTER as well ${JSON.stringify(sessionAttributes)}`);
     console.log(`The confirmation status is ${confirmationStatus}`);
     console.log(`The inputTranscript is ${inputTranscript}`);
     console.log(` carBrandName ${carBrandName}`);
@@ -66,8 +65,7 @@ module.exports = function(intentRequest) {
                                                           imageUpload,
                                                           sessionAttributes.uniqueReferenceNumber);
 
-    console.log(`validationResult.isValid value is ${validationResult.isValid} and violatedSlot is ${validationResult.violatedSlot}`);
-    /*
+   /*
     If data is valid then remove all other session attributes except unique reference 
     */
     if(validationResult.isValid)
@@ -84,10 +82,7 @@ module.exports = function(intentRequest) {
       * same as the slot which has again violated in validation then close the conversation as user
       * does not have a valid input for the slot.
       */
-      console.log(`Session Attributes is : ${sessionAttributes}`);
-      //var isSessionAttributeEmpty = _.isEmpty(sessionAttributes);
-      console.log(`Session Attribute Empty check is ${isSessionAttributeEmpty}`);
-
+      
       //Change-10 for unique reference number in session attributes
       //if(!isSessionAttributeEmpty)
 
@@ -228,9 +223,9 @@ module.exports = function(intentRequest) {
            {
               var localEmailAddress = emailAddress.substring(emailAddress.indexOf("|") + 1);
               let now = new Date();
-            	let auctionCreateDate = date.format(now,'DD-MMM-YYYY');
+            	let auctionCreateDate = date.format(now,'YYYY-MM-DD');
             	let tempAuctionExpiryDate = date.addDays(now,numberofDays);
-            	let auctionExpiryDate = date.format(tempAuctionExpiryDate,'DD-MMM-YYYY');
+            	let auctionExpiryDate = date.format(tempAuctionExpiryDate,'YYYY-MM-DD');
               var message = {
                             contentType: 'PlainText',
                             content: `Great I have got all the details I need, do you want me to proceed further and put up your *Car for Auction* with following details:\n` +

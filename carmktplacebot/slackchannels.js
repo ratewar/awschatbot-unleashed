@@ -1,6 +1,7 @@
 const url = require('url');
 const querystring = require('querystring');
 const request = require('request-promise');
+const date = require('date-and-time');
 
 module.exports = function (securityToken,
                             channelName,
@@ -28,11 +29,12 @@ module.exports = function (securityToken,
     };
     request(options).then((response) => {
         console.log(`Channel id is ${response.channel.id}`);
-        var today = new Date();
-        var endDay = new Date(today.getFullYear(),today.getMonth(),today.getDate() + numberofDays);
-        var strCreateDate = today.toISOString().substr(0,10);
-        var strEndDate = endDay.toISOString().substr(0,10);
-
+        let now = new Date();
+        let auctionCreateDate = date.format(now,'YYYY-MM-DD');
+        let tempAuctionExpiryDate = auctionCreateDate.addDays(now,numberofDays);
+        let auctionExpiryDate = date.format(tempAuctionExpiryDate,'YYYY-MM-DD');
+        //Need to fetch the S3 URL and append in the message below
+        //RAJAT RATEWAL
         var message = "For you as a valued Dealer, we have a another good vehicle up for sale. \r\n Here are the required details:\r\n" +
                       ">>> Car Brand : *" + carBrandName + "*" + "\r\n" +
                       "Car Model : *" + carModel + "*" + "\r\n" +
@@ -44,8 +46,8 @@ module.exports = function (securityToken,
                       "No.of people who have owned your car : *" + numberOfOwners + "*" + "\r\n" + 
                       "Short shortDescription about the Vehicle : *" + shortDescription + "*" + "\r\n" +
                       "Car available in City : *" + carCity + "*" + "\r\n" + 
-                      "Auction Creation Date : *" + strCreateDate + "*" + "\r\n" +
-                      "Auction Expiry Date: *" + strEndDate + "*" + "\r\n" +
+                      "Auction Creation Date : *" + auctionCreateDate + "*" + "\r\n" +
+                      "Auction Expiry Date: *" + auctionExpiryDate + "*" + "\r\n" +
                       "Use the following reference number to bid for the vehicle *" + uniqueReferenceNumber + "*" + "\r\n" +
                       "You can view images of the Car at following link: http://foo.com/";
         inviteDealers(securityToken,response.channel.id,message);
