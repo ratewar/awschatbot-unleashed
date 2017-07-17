@@ -1,5 +1,4 @@
 'use strict';
-
 const sellCar = require('./sellCar');
 const showMyBids = require('./showMyBids');
 const greetUser = require('./greetUser');

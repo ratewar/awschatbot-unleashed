@@ -2,6 +2,7 @@
 const _ = require('lodash');
 const isNumeric = require('isnumeric');
 var validator = require('validator');
+const databaseManager = require('../databaseManager');
 module.exports.validateCarDetails = function (carBrandName,
                                                carModel,
                                                 carYearOfMake,
@@ -12,11 +13,13 @@ module.exports.validateCarDetails = function (carBrandName,
                                                 carCity,
                                                 shortDescription,
                                                 numberofDays,
-                                                emailAddress) {
+                                                emailAddress,
+                                                imageUpload,
+                                                uniqueReferenceNumber) {
      const carBrandNames = ['nissan', 'ford', 'jaguar', 'fiat', 'general motors', 'mahindra', 'bentley','bmw','mitsubishi','mazda','bugatti','buick','jeep','renault','datsun','acura','aston martin','maruti suzuki','tata','hyundai','isuzu','suzuki','honda','alfa romeo','audi','mercedes-benz','toyota'];
+     const carKmDrivenValues = ['less than 12000','12001 - 18000','18001 - 24000','24001 - 32000','32001 - 40000']; 
      if(carBrandName)
      {
-     
         var isCarBrandCarValid = carBrandNames.includes(carBrandName.toLowerCase());
         if(!isCarBrandCarValid)
         {
@@ -32,7 +35,7 @@ module.exports.validateCarDetails = function (carBrandName,
               carBrandName = _.startCase(_.toLower(carBrandName));
               return buildValidationResult(false,
                                            'CarBrandName',
-                                           `Kindly note ${carBrandName} is not in our list. pls check if your Car Brand exist in the list below as we only deal in the following Car Brands ${concatString}`,
+                                           `Kindly note *${carBrandName}* is not in our list. pls check if your *Car Brand* exist in the list below as we only deal in the following *Car Brands* ${concatString}`,
                                            null,
                                            null,
                                            false);
@@ -73,7 +76,6 @@ module.exports.validateCarDetails = function (carBrandName,
       if(carKmDriven)
       {
          console.log(`Inside Car Km Driven validation with value ${carKmDriven}`); 
-         const carKmDrivenValues = ['less than 12000','12001 - 18000','18001 - 24000','24001 - 32000','32001 - 40000']; 
          var isCarKmDrivenValid = carKmDrivenValues.includes(carKmDriven.toLowerCase());
          console.log('Car Km Driven is not in Array values');
          if(!isCarKmDrivenValid)
@@ -167,9 +169,9 @@ module.exports.validateCarDetails = function (carBrandName,
       }
       if(emailAddress)
       {
-          emailAddress = emailAddress.substring(emailAddress.indexOf("|") + 1);
-          console.log(`inside validation check for Email Address ${emailAddress}`);
-          var isValidEmailId = validator.isEmail(emailAddress); 
+          var localEmailAddress = emailAddress.substring(emailAddress.indexOf("|") + 1);
+          console.log(`inside validation check for Email Address ${localEmailAddress}`);
+          var isValidEmailId = validator.isEmail(localEmailAddress); 
           console.log(`value of isValidEmailId is ${isValidEmailId}`);
           if(!isValidEmailId)
           {
@@ -180,6 +182,39 @@ module.exports.validateCarDetails = function (carBrandName,
                                           null,
                                           null,
                                           false);      
+          }
+      }
+      if(imageUpload)
+      {
+          console.log(`inside validation check for Image Upload ${imageUpload}`);
+          if(imageUpload !== 'N' && imageUpload !== 'Y')
+          {
+              console.log('Image Upload value is incorrect hence created a False Validation Result');
+              return buildValidationResult(false, 
+                                          'ImageUpload',
+                                          '*Post Upload* images click on *Have Uploaded* or *Have No Images* if you don not want',
+                                          'Specify your input by selecting an option below',
+                                          'Choose one of the options below',
+                                          true);      
+          }
+          if(imageUpload === 'Y')
+          {
+              console.log('Because Image Upload value is Y');
+              databaseManager.checkImageUpload(uniqueReferenceNumber).then(response => {
+                  if(_.isEmpty(response))
+                  {
+                      return buildValidationResult(false, 
+                                                   'ImageUpload',
+                                                   '*Post Upload* images click on *Have Uploaded* or *Have No Images* if you don not want',
+                                                   'Specify your input by selecting an option below',
+                                                   'Choose one of the options below',
+                                                   true);        
+                  }
+                  else
+                  {
+                      console.log(`Hurray ---------- Found Images ${JSON.stringify(response)}`);  
+                  }
+              });
           }
       }
       return buildValidationResult(true, null, null,null,null,null);

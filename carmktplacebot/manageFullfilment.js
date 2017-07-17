@@ -20,7 +20,7 @@ module.exports = function(intentRequest) {
   const numberofDays = intentRequest.currentIntent.slots.NumberOfDays;
   const emailAddress = intentRequest.currentIntent.slots.EmailAddress;
   var userId = intentRequest.userId;
-
+  var sessionAttributes = intentRequest.sessionAttributes;
   return createCarBid(userId,
                       carBrandName, 
                       carModel,
@@ -33,8 +33,12 @@ module.exports = function(intentRequest) {
                       shortDescription,
                       maximumSellingPrice,
                       numberofDays,
-                      emailAddress).then(fullfiledOrder => {
-    return lexResponses.close(intentRequest.sessionAttributes,
+                      emailAddress,
+                      sessionAttributes).then(fullfiledOrder => {
+            //Change-10 for unique reference number in session attributes            
+            //before calling close clear session attributes.
+            sessionAttributes = {};              
+    return lexResponses.close(sessionAttributes,
                               fullfiledOrder.fullfilmentState,
                               fullfiledOrder.message);
   });
@@ -43,8 +47,11 @@ function createCarBid(userId,carBrandName,carModel,
                       carYearOfMake,carVariant,carKmDriven,carColor,
                       numberOfOwners,carCity,shortDescription,
                       maximumSellingPrice,
-                      numberofDays,emailAddress) {
-  var uniqueReferenceNumber = shortid.generate();
+                      numberofDays,emailAddress,
+                      sessionAttributes) {
+  //Change-10 for unique reference number in session attributes            
+  //var uniqueReferenceNumber = shortid.generate();
+  var uniqueReferenceNumber = sessionAttributes.uniqueReferenceNumber;
   return databaseManager.createCarBid(userId,carBrandName,carModel,
                                       carYearOfMake,carVariant,carKmDriven,
                                       carColor,numberOfOwners,carCity,
@@ -52,21 +59,21 @@ function createCarBid(userId,carBrandName,carModel,
                                       maximumSellingPrice,numberofDays,emailAddress).then(dealerMarketPlaceResponse => {
       var channelName = uniqueReferenceNumber + "_" + carBrandName + "_" + carModel;
       createBidChannel(dealerMarketPlaceResponse,
-                                channelName,
-                                uniqueReferenceNumber,
-                                carBrandName,
-                                carModel,
-                                carYearOfMake,
-                                carVariant,
-                                carKmDriven,
-                                carColor,
-                                numberOfOwners,
-                                carCity,
-                                shortDescription,
-                                maximumSellingPrice,
-                                numberofDays);
+                        channelName,
+                        uniqueReferenceNumber,
+                        carBrandName,
+                        carModel,
+                        carYearOfMake,
+                        carVariant,
+                        carKmDriven,
+                        carColor,
+                        numberOfOwners,
+                        carCity,
+                        shortDescription,
+                        maximumSellingPrice,
+                        numberofDays);
       var message = `Thanks, Your Car ${carBrandName} ${carModel} ${carYearOfMake} has been put up for bid. \r\n \r\n Please quote the following reference number to know the status of your bid: *${uniqueReferenceNumber}*`
-      return buildFulfilmentResult('Fulfilled', message);
+      return lexResponses.buildFulfilmentResult('Fulfilled', message);
   });
 }
 function createBidChannel(dealerMarketPlaceResponse,channelName,uniqueReferenceNumber,
@@ -75,6 +82,10 @@ function createBidChannel(dealerMarketPlaceResponse,channelName,uniqueReferenceN
                             shortDescription,maximumSellingPrice,
                             numberofDays){
     console.log('*********************** Dealer Market Place Token is ');
+    /*
+    * We may have multiple Dealer Market Places hence it will create channels on all the Dealer Market places
+    * Multiple Dealer Market Places are only possible when multiple slack teams have installed Dealer MarketPlace app 
+    */
     dealerMarketPlaceResponse.Items.forEach(function(item) {
         console.log(" ***** " + item.security_token + ": " + item.market_place_type);
         slackChannelFactory(item.security_token,
@@ -92,10 +103,4 @@ function createBidChannel(dealerMarketPlaceResponse,channelName,uniqueReferenceN
                                 maximumSellingPrice,
                                 numberofDays);
     });
-}
-function buildFulfilmentResult(fullfilmentState, messageContent) {
-  return {
-    fullfilmentState,
-    message: { contentType: 'PlainText', content: messageContent }
-  };
 }

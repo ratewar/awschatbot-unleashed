@@ -31,10 +31,11 @@ provider:
         - "Fn::Join": ["", ["arn:aws:dynamodb:", {"Ref": "AWS::Region"}, ":", {"Ref": "AWS::AccountId"}, ":table/car-bid-master*"]]
         - "Fn::Join": ["", ["arn:aws:dynamodb:", {"Ref": "AWS::Region"}, ":", {"Ref": "AWS::AccountId"}, ":table/car-bid-details*"]]
         - "Fn::Join": ["", ["arn:aws:dynamodb:", {"Ref": "AWS::Region"}, ":", {"Ref": "AWS::AccountId"}, ":table/dealer-market-place-tokens*"]]
+        - "Fn::Join": ["", ["arn:aws:dynamodb:", {"Ref": "AWS::Region"}, ":", {"Ref": "AWS::AccountId"}, ":table/bid-master-images*"]]
   memorySize: 512
   environment:
-    SLACK_CLIENT_ID: "xxxxxxxxxxxxxxxxx"
-    SLACK_CLIENT_SECRET: "xxxxxxxxxxxxxxx"
+    SLACK_CLIENT_ID: "183935536182.206855484468"
+    SLACK_CLIENT_SECRET: "b6f87f06789a6e13c89e021bd21208bc"
 # you can overwrite defaults here
 #  stage: dev
 #  region: us-east-1
@@ -71,19 +72,6 @@ provider:
 functions:
   intents:
     handler: handler.intents
-  greetUser:
-    handler: handler.greetUser
-  createBidSlackChannel:
-    handler: hander.createBidSlackChannel
-    events:
-      - stream:
-          type: dynamodb
-          arn: 
-              Fn::GetAtt:
-                - CarBidMasterTable
-                - StreamArn
-          batchSize: 1
-          startingPosition: LATEST      
   authorization:
     handler: handler.authorization
     events:
@@ -104,7 +92,7 @@ functions:
     handler: handler.s3UploadTriggered
     events:
       - s3:
-          bucket: awschatbotimagehost1 # Bucket will be created if it does not exists but make sure that its same bucket used by ImageUpload App and has CORS enabled
+          bucket: awschatbotimagehostnew # Bucket will be created if it does not exists but make sure that its same bucket used by ImageUpload App and has CORS enabled
           event: s3:ObjectCreated:Put
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
@@ -199,4 +187,21 @@ resources:
        ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-       TableName: "dealer-market-place-tokens"  
+       TableName: "dealer-market-place-tokens"
+  BidImageMaster:
+     Type: AWS::DynamoDB::Table
+     Properties:
+       AttributeDefinitions:
+        - AttributeName: "bid_ref"
+          AttributeType: "S"
+        - AttributeName: "unique_id"
+          AttributeType: "S"  
+       KeySchema:
+        - AttributeName: "bid_ref"
+          KeyType: "HASH"  
+        - AttributeName: "unique_id"
+          KeyType: "RANGE"    
+       ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+       TableName: "bid-master-images"         

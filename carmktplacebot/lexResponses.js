@@ -105,6 +105,13 @@ module.exports.buildOptions = function(forSlot)
           { text: 'In 5 Days', value: 5},
       ];
     }
+    else if (forSlot === 'ImageUpload')
+    {
+      return [
+          { text: 'Have Uploaded', value: 'Y'},
+          { text: 'Have No Images', value: 'N'},
+      ];
+    }
 }
 
 

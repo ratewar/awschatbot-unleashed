@@ -1,5 +1,4 @@
 'use strict';
-
 const date = require('date-and-time');
 const AWS = require('aws-sdk');
 const promisify = require('es6-promisify');
@@ -18,11 +17,10 @@ module.exports.createCarBid = function(userId,
 										shortDescription,
 										uniqueReferenceNumber,
 										maximumSellingPrice,
-                    numberofDays,
-                    emailAddress) {
+					                    numberofDays,
+					                    emailAddress) {
 
 	const item = {};
-	item.carId = uniqueReferenceNumber;
 	item.carBrandName = carBrandName;
 	item.CarModel = carModel;
 	item.carYearOfMake = carYearOfMake;
@@ -39,10 +37,12 @@ module.exports.createCarBid = function(userId,
 	let auctionCreateDate = date.format(now,'DD-MMM-YYY');
 	let tempAuctionExpiryDate = date.addDays(now,numberofDays);
 	let auctionExpiryDate = date.format(tempAuctionExpiryDate,'DD-MMM-YYY');
+	console.log(`Auction Creation Date is ${auctionCreateDate}`);
+	console.log(`Auction Expiry Date is ${auctionExpiryDate}`);
 	item.auction_create_date = auctionCreateDate;
 	item.auction_end_date = auctionExpiryDate;
 	item.number_of_days = numberofDays;
-	item.email_address = utility.formatEmailAddress(emailAddress);;
+	item.email_address = emailAddress.substring(emailAddress.indexOf("|") + 1);
 
 	//item: it is a new bid record just created in saveItemToTable
 	return saveItemToTable('car-bid-master', item).then((item)=>{
@@ -94,6 +94,24 @@ module.exports.recordBidSubmission = function(bidReference,dealerName,dealerSlac
 	return saveItemToTable('car-bid-details', item).then((item)=>{
 		return Promise.resolve(item);
 	});
+};
+module.exports.checkImageUpload = function(uniqueReferenceNumber) {
+	const params = {
+	    TableName: 'bid-master-images',
+	    KeyConditionExpression: "bid_ref = :a",
+	    ExpressionAttributeValues : {
+	      ":a":uniqueReferenceNumber
+	    }
+  	};
+	const getAsync = promisify(dynamo.query, dynamo);
+	return getAsync(params).then(response => {
+	    if (_.isEmpty(response)) {
+	      console.log(`================No images found in the database uniqueReferenceNumber ${uniqueReferenceNumber}`);
+	      return Promise.reject(new Error(`No images found in the database uniqueReferenceNumber ${uniqueReferenceNumber}`));
+	    }
+    	console.log(`Found image record for refernce Number : ${response}`);
+    	return response;
+  	});
 };
 function saveItemToTable(tableName, item) {
 	const params = {

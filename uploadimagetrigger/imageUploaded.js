@@ -1,11 +1,8 @@
 'use strict';
-
 var AWS = require('aws-sdk');
 var uuid = require('node-uuid');
 var docClient = new AWS.DynamoDB.DocumentClient();
-var table = "bidimagemaster";
-
-
+var table = "bid-master-images";
 module.exports = function (event) {
   
   var bucket = event.Records[0].s3.bucket.name;
@@ -13,7 +10,6 @@ module.exports = function (event) {
   var UniqueRef = filename.substring(0,filename.indexOf("%24")); //%24 is $ sign and when filename has special characters its passed as UTF8
   const response = {message: 'A new file Named' + filename + ' was uploaded to the bucket ' + bucket + ' with unique ref ' + UniqueRef,event};
   console.log('A new file named:'+filename +' was created' + ' and the unique ref is ' + UniqueRef);
-
 
   var uuid1 = uuid.v1();
 
