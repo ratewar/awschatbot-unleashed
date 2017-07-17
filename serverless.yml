@@ -34,8 +34,8 @@ provider:
         - "Fn::Join": ["", ["arn:aws:dynamodb:", {"Ref": "AWS::Region"}, ":", {"Ref": "AWS::AccountId"}, ":table/bid-master-images*"]]
   memorySize: 512
   environment:
-    SLACK_CLIENT_ID: "183935536182.206855484468"
-    SLACK_CLIENT_SECRET: "b6f87f06789a6e13c89e021bd21208bc"
+    SLACK_CLIENT_ID: "xxxxxxxxxxxxxxxxxxxxxxxxx"
+    SLACK_CLIENT_SECRET: "xxxxxxxxxxxxxxxxxxxxxxxxx"
 # you can overwrite defaults here
 #  stage: dev
 #  region: us-east-1
