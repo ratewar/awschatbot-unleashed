@@ -1,5 +1,5 @@
 'use strict';
-const utility = require('../utilitymethod');
+const date = require('date-and-time');
 const lexResponses = require('./lexResponses');
 const validator = require('./validation');
 const databaseManager = require('../databaseManager');
@@ -9,7 +9,6 @@ module.exports = function(intentRequest) {
 
     const slots = intentRequest.currentIntent.slots;
     const emailAddress = slots.EmailAddress;
-    console.log(` email Address ${emailAddress}`);
     const carBrandName = slots.CarBrandName;
   	const carModel = slots.CarModel;
   	const carYearOfMake = slots.CarYearOfMake;
@@ -22,9 +21,6 @@ module.exports = function(intentRequest) {
     const maximumSellingPrice = slots.MaximumSellingPrice;
     const confirmationStatus = intentRequest.currentIntent.confirmationStatus;
     const numberofDays = slots.NumberOfDays;
-    
-    
-
     const inputTranscript = intentRequest.inputTranscript;
     const source = intentRequest.invocationSource;
     var userId = intentRequest.userId;
@@ -52,17 +48,17 @@ module.exports = function(intentRequest) {
                                                           carCity,
                                                           shortDescription,
                                                           numberofDays,
-                                                          emailAddress);                                                      
-                                                     
+                                                          emailAddress);
+
     console.log(`validationResult.isValid value is ${validationResult.isValid} and violatedSlot is ${validationResult.violatedSlot}`);
     if (!validationResult.isValid)
     {
       /*
-      * this block below is checking if session attribute is non empty and contains violated slot which is 
+      * this block below is checking if session attribute is non empty and contains violated slot which is
       * same as the slot which has again violated in validation then close the conversation as user
       * does not have a valid input for the slot.
       */
-      console.log(`Session Attributes is : ${sessionAttributes}`);  
+      console.log(`Session Attributes is : ${sessionAttributes}`);
       var isSessionAttributeEmpty = _.isEmpty(sessionAttributes);
       console.log(`Session Attribute Empty check is ${isSessionAttributeEmpty}`);
       if(!isSessionAttributeEmpty)
@@ -72,8 +68,8 @@ module.exports = function(intentRequest) {
            {
               var fulfilmentResponse = lexResponses.buildFulfilmentResult('Fulfilled', 'I wish I could help you but unfortunately with provided details, I will not be able to proceed any further. \n Thank you for your visit and Have a Great Day!');
               intentRequest.sessionAttributes = {};
-              return Promise.resolve(lexResponses.close(intentRequest.sessionAttributes, 
-                                                        fulfilmentResponse.fullfilmentState, 
+              return Promise.resolve(lexResponses.close(intentRequest.sessionAttributes,
+                                                        fulfilmentResponse.fullfilmentState,
                                                         fulfilmentResponse.message));
            }
       }//end of if(!isSessionAttributeEmpty)
@@ -84,7 +80,7 @@ module.exports = function(intentRequest) {
         responseCard = lexResponses.buildResponseCard(validationResult.responseCardTitle,
                                              validationResult.responseCarSubtitle,
                                               options);
-      }// end of if(validationResult.isResponseCardRequired)  
+      }// end of if(validationResult.isResponseCardRequired)
       slots[`${validationResult.violatedSlot}`] = null;
       sessionAttributes = {};
       sessionAttributes.violatedSlot = validationResult.violatedSlot;
@@ -96,15 +92,15 @@ module.exports = function(intentRequest) {
                                               responseCard);
       var strResponse = JSON.stringify(response);
       console.log(strResponse);
-      return Promise.resolve(response); 
+      return Promise.resolve(response);
     }//end of  if (!validationResult.isValid)
     //*************************End of Validation*********************************
 
     console.log(`checking for Confirmation Status check ${confirmationStatus}`);
     if(confirmationStatus !== 'Confirmed' && confirmationStatus !== 'Denied')
-    {  
+    {
           console.log('right outside the car km driven elicit slot construct');
-          if(carBrandName !== null && carModel !== null && carYearOfMake !== null && 
+          if(carBrandName !== null && carModel !== null && carYearOfMake !== null &&
               carVariant !== null && carKmDriven === null)
           {
               sessionAttributes = {};
@@ -122,9 +118,9 @@ module.exports = function(intentRequest) {
                                                     responseCard);
               var strResponse = JSON.stringify(response);
               console.log(strResponse);
-              return Promise.resolve(response); 
+              return Promise.resolve(response);
           }//end of ElicitSlot response for Car Km Driven
-          if(carBrandName !== null && carModel !== null && carYearOfMake !== null && 
+          if(carBrandName !== null && carModel !== null && carYearOfMake !== null &&
              carVariant !== null && carKmDriven !== null && carColor !== null && numberOfOwners === null)
           {
               sessionAttributes = {};
@@ -142,10 +138,10 @@ module.exports = function(intentRequest) {
                                                     responseCard);
               var strResponse = JSON.stringify(response);
               console.log(strResponse);
-              return Promise.resolve(response); 
+              return Promise.resolve(response);
           }//end of ElicitSlot response for Number of Owners
-          if(carBrandName !== null && carModel !== null && carYearOfMake !== null && 
-             carVariant !== null && carKmDriven !== null && carColor !== null && 
+          if(carBrandName !== null && carModel !== null && carYearOfMake !== null &&
+             carVariant !== null && carKmDriven !== null && carColor !== null &&
              numberOfOwners !== null && carCity !== null && shortDescription !== null &&
              maximumSellingPrice !== null && numberofDays === null)
           {
@@ -164,41 +160,43 @@ module.exports = function(intentRequest) {
                                                     responseCard);
               var strResponse = JSON.stringify(response);
               console.log(strResponse);
-              return Promise.resolve(response); 
+              return Promise.resolve(response);
           }//end of ElicitSlot response for Number of Owners*/
 
-          if(carBrandName !== null && carModel !== null && carYearOfMake !== null && 
-             carVariant !== null && carKmDriven !== null && carColor !== null && 
+          if(carBrandName !== null && carModel !== null && carYearOfMake !== null &&
+             carVariant !== null && carKmDriven !== null && carColor !== null &&
              numberOfOwners !== null && carCity !== null && shortDescription !== null &&
-             maximumSellingPrice !== null && numberofDays !== null && emailAddress !== null)  
-           {   
-              emailAddress = utility.formatEmailAddress(emailAddress);
-              var auctionCreationDate = utility.currentDateInStringFormat();
-              var auctionExpiryDate = utility.addDaysInTodayDate(numberofDays);
-              var message = { 
-                            contentType: 'PlainText', 
-                            content: `Great I have got all the details I need, do you want me to proceed further and put up your *Car for Auction* with following details:\n` + 
-                                     `1. Car Brand: *${carBrandName}* \n` +  
-                                     `2. Model: *${carModel}* \n` + 
+             maximumSellingPrice !== null && numberofDays !== null && emailAddress !== null)
+           {
+              var emailAddress1 = emailAddress.substring(emailAddress.indexOf("|") + 1);
+              let now = new Date();
+            	let auctionCreateDate = date.format(now,'DD-MMM-YYY');
+            	let tempAuctionExpiryDate = date.addDays(now,numberofDays);
+            	let auctionExpiryDate = date.format(tempAuctionExpiryDate,'DD-MMM-YYY');
+              var message = {
+                            contentType: 'PlainText',
+                            content: `Great I have got all the details I need, do you want me to proceed further and put up your *Car for Auction* with following details:\n` +
+                                     `1. Car Brand: *${carBrandName}* \n` +
+                                     `2. Model: *${carModel}* \n` +
                                      `3. Variant: *${carVariant}* \n` +
-                                     `4. Color: *${carColor}* \n` + 
+                                     `4. Color: *${carColor}* \n` +
                                      `5. Year of Make: *${carYearOfMake}* \n` +
                                      `6. Kms Driven: *${carKmDriven} Kms* \n` +
                                      `7. Expected Price: *INR. ${maximumSellingPrice}* \n` +
                                      `8. No.of people who have owned your car: *${numberOfOwners}* \n` +
-                                     `9. Short Description: *${shortDescription}* \n` + 
+                                     `9. Short Description: *${shortDescription}* \n` +
                                      `10. Your City: *${carCity}* \n` +
                                      `11. Number of Days Your Car will be kept open for Auction: *${numberofDays} days* \n` +
-                                     `12. Auction Creation Date: *${auctionCreationDate}* \n` +
+                                     `12. Auction Creation Date: *${auctionCreateDate}* \n` +
                                      `13. Auction Expiry Date: *${auctionExpiryDate}* \n` +
-                                     `12. Your Email Address: *${emailAddress}*`,
+                                     `12. Your Email Address: *${emailAddress1}*`,
               };
               return Promise.resolve(lexResponses.confirmIntent(intentRequest.sessionAttributes,
                                                             intentRequest.currentIntent.name,
                                                             intentRequest.currentIntent.slots,
                                                             message,
-                                                            null));      
-          }//end of Confirm Intent response  
+                                                            null));
+          }//end of Confirm Intent response
     }
     console.log(`checking for Denied value of confirmation status ${confirmationStatus}`);
     if(confirmationStatus === 'Denied')
@@ -206,14 +204,11 @@ module.exports = function(intentRequest) {
         console.log('Inside Denied check and creating close response');
         var fulfilmentResponse = lexResponses.buildFulfilmentResult('Fulfilled', 'Ok, Your Car will not be put up Auction, I hope you had a great experience talking to me. I will be happy to assist you again in future. \n Have a Great Day!');
         intentRequest.sessionAttributes = {};
-        return Promise.resolve(lexResponses.close(intentRequest.sessionAttributes, 
-                                                        fulfilmentResponse.fullfilmentState, 
-                                                        fulfilmentResponse.message));   
-    }      
+        return Promise.resolve(lexResponses.close(intentRequest.sessionAttributes,
+                                                        fulfilmentResponse.fullfilmentState,
+                                                        fulfilmentResponse.message));
+    }
     console.log('before Creting Delegate Response');
     return Promise.resolve(lexResponses.delegate(intentRequest.sessionAttributes,
 											                             intentRequest.currentIntent.slots));
 };
-
-
-
