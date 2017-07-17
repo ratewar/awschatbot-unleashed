@@ -44,7 +44,7 @@ console.log("Querying for bids that are to be marked as invalid.");
                             },
                             UpdateExpression: "set is_active = :r",
                             ExpressionAttributeValues:{
-                            ":r":"Y"
+                            ":r":"N"
                             },
                             ReturnValues:"UPDATED_NEW"
                         };
