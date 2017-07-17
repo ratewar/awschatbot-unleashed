@@ -5,7 +5,7 @@ const databaseManager = require('../databaseManager');
 const shortid = require('shortid');
 
 module.exports = function(intentRequest) {
-  
+
   const carBrandName = intentRequest.currentIntent.slots.CarBrandName;
   const carModel = intentRequest.currentIntent.slots.CarModel;
   const carYearOfMake = intentRequest.currentIntent.slots.CarYearOfMake;
@@ -21,26 +21,26 @@ module.exports = function(intentRequest) {
   const emailAddress = intentRequest.currentIntent.slots.EmailAddress;
   var userId = intentRequest.userId;
 
-  return createCarBid(userId, 
+  return createCarBid(userId,
                       carBrandName, 
-                      carModel, 
-                      carYearOfMake, 
-                      carVariant, 
-                      carKmDriven, 
-                      carColor, 
-                      numberOfOwners, 
-                      carCity, 
+                      carModel,
+                      carYearOfMake,
+                      carVariant,
+                      carKmDriven,
+                      carColor,
+                      numberOfOwners,
+                      carCity,
                       shortDescription,
                       maximumSellingPrice,
                       numberofDays,
                       emailAddress).then(fullfiledOrder => {
-    return lexResponses.close(intentRequest.sessionAttributes, 
-                              fullfiledOrder.fullfilmentState, 
+    return lexResponses.close(intentRequest.sessionAttributes,
+                              fullfiledOrder.fullfilmentState,
                               fullfiledOrder.message);
   });
 };
 function createCarBid(userId,carBrandName,carModel,
-                      carYearOfMake,carVariant,carKmDriven,carColor, 
+                      carYearOfMake,carVariant,carKmDriven,carColor,
                       numberOfOwners,carCity,shortDescription,
                       maximumSellingPrice,
                       numberofDays,emailAddress) {
@@ -74,7 +74,7 @@ function createBidChannel(dealerMarketPlaceResponse,channelName,uniqueReferenceN
                             carKmDriven,carColor,numberOfOwners,carCity,
                             shortDescription,maximumSellingPrice,
                             numberofDays){
-    console.log('*********************** Dealer Market Place Token is ');                                  
+    console.log('*********************** Dealer Market Place Token is ');
     dealerMarketPlaceResponse.Items.forEach(function(item) {
         console.log(" ***** " + item.security_token + ": " + item.market_place_type);
         slackChannelFactory(item.security_token,
