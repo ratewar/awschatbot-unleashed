@@ -4,7 +4,6 @@ const dispatch = require('./carmktplacebot/dispatch');
 const authorizer = require('./dealersmktplace/authorization');
 const submitBid = require('./dealersmktplace/bidForCar');
 const bidInactive = require('./markbidinactive/markInactive');
-const greetUser = require('./greetUser');
 const uploadedImages = require('./uploadimagetrigger/imageUploaded');
 
 /*module.exports.greetUser = (event, context, callback) => {
@@ -31,7 +30,7 @@ module.exports.intents = (event, context, callback) => {
 module.exports.createBidSlackChannel = (event, context, callback) => {
 	try {
 	    var item = event.Records[0].dynamodb.NewImage;
-	    console.log(item);	
+	    console.log(item);
 	    console.log('Car Id is ' + item.carId.S);
 	    console.log('Car Brand is ' + item.carBrandName.S);
 	    console.log('Car Model is ' + item.CarModel.S);
@@ -48,7 +47,7 @@ module.exports.createBidSlackChannel = (event, context, callback) => {
 	    callback(err);
 	}
 	callback(null, null);
-}; 
+};
 module.exports.authorization = (event, context, callback) => {
 	try{
 		const code = event.queryStringParameters.code;
