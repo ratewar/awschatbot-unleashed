@@ -11,9 +11,8 @@ console.log("Started updating the Bids in DynamoDB");
  
 var AWS = require('aws-sdk');
 var docClient = new AWS.DynamoDB.DocumentClient();
-var table = "bidmaster";
 var today=new Date().toISOString().substr(0,10);
-
+var table = "car-bid-master";
 
 console.log("Querying for bids that are to be marked as invalid.");
     
@@ -21,10 +20,10 @@ console.log("Querying for bids that are to be marked as invalid.");
     TableName : table,
     KeyConditionExpression: "#valid = :getdate",
     ExpressionAttributeNames:{
-        "#valid": "bidRef"
+        "#valid": "auction_end_date"
     },
     ExpressionAttributeValues: {
-        ":getdate":'234' // Need to change this for variable today and create a global index on the new column [TBD]
+        ":getdate": today
     }
     };
     
@@ -34,19 +33,18 @@ console.log("Querying for bids that are to be marked as invalid.");
     } else {
         console.log("Query succeeded.");
         data.Items.forEach(function(item) {
-            console.log(" -", item.bidRef + ": " + item.dealerRef
-            + " ... " + item.bid
-            + " ... " + item.created_on);
+            console.log(" -", item.bid_reference + ": " + item.auction_create_date
+            + " ... " + item.auction_end_date
+            + " ... " + item.number_of_days);
             
             var myupdate={
                         TableName:table,
                         Key:{
-                            "bidRef": item.bidRef,
-                            "dealerRef": item.dealerRef
+                            "bid_reference": item.bid_reference
                             },
-                            UpdateExpression: "set is_Active = :r",
+                            UpdateExpression: "set is_active = :r",
                             ExpressionAttributeValues:{
-                            ":r":"J" // Need to change to Y or N
+                            ":r":"Y"
                             },
                             ReturnValues:"UPDATED_NEW"
                         };
