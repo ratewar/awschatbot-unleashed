@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/ratewar/awschatbot-unleashed.svg?branch=master)](https://travis-ci.org/ratewar/awschatbot-unleashed)
+
 ## Pre-requisites
 
 1. Node.js `v4.3.0` or later. [Download](https://nodejs.org/en/download/)
